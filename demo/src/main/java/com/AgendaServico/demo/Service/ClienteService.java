@@ -1,7 +1,7 @@
 package com.AgendaServico.demo.Service;
 
 
-import com.AgendaServico.demo.Model.Cliente;
+import com.AgendaServico.demo.model.Cliente;
 import com.AgendaServico.demo.Repository.ClienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

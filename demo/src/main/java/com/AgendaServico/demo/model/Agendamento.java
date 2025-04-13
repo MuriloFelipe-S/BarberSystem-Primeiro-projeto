@@ -1,4 +1,4 @@
-package com.AgendaServico.demo.Model;
+package com.AgendaServico.demo.model;
 
 
 import jakarta.persistence.*;
@@ -17,7 +17,7 @@ public class Agendamento {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToMany
+    @ManyToOne
     @JoinColumn(name = "cliente_id", nullable = false)
     private Cliente cliente;
 

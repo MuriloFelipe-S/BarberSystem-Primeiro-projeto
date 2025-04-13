@@ -1,18 +1,14 @@
-package com.AgendaServico.demo.Model;
+package com.AgendaServico.demo.model;
 
 
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import jdk.jfr.Enabled;
+import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
 
-@Enabled
+@Entity
 @Getter
 @Setter
 public class Servico {
@@ -26,9 +22,12 @@ public class Servico {
     @Column(nullable = false, length = 30) // indica que o campo nao pode ser nulo (nullable = false), length indica quantidade de caracteres (100)
     private String tipo;
 
-    @NotNull
+
     @Column(nullable = false)
     private Double valor;
+
+    @ManyToMany(mappedBy = "servicos")
+    private Set<Agendamento> agendamentos;
 
     public Servico() {
     }

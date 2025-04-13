@@ -1,7 +1,6 @@
-package com.AgendaServico.demo.Model;
+package com.AgendaServico.demo.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

@@ -1,8 +1,7 @@
-package com.AgendaServico.demo.Controller;
+package com.AgendaServico.demo.controller;
 
-import com.AgendaServico.demo.Model.Cliente;
+import com.AgendaServico.demo.model.Cliente;
 import com.AgendaServico.demo.Repository.ClienteRepository;
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;

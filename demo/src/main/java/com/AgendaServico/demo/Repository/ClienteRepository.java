@@ -1,6 +1,6 @@
 package com.AgendaServico.demo.Repository;
 
-import com.AgendaServico.demo.Model.Cliente; // importando cliente do Model
+import com.AgendaServico.demo.model.Cliente; // importando cliente do Model
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
