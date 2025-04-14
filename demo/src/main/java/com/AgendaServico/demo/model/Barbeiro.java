@@ -24,7 +24,6 @@ public class Barbeiro {
     @Column(nullable = false, length = 100) // indica que o campo nao pode ser nulo (nullable = false), length indica quantidade de caracteres (100)
     private String nome;
 
-    @NotBlank(message = "Salario é obrigatorio mesmo que seja zero")
     @Column(nullable = false)
     @Digits(integer = 5, fraction = 2) // define tamanho do salario (5 digitos total 2 após a virgula)
     private BigDecimal salario;
