@@ -1,10 +1,15 @@
 package com.AgendaServico.demo.Repository;
 
 import com.AgendaServico.demo.model.Agendamento;
-import com.AgendaServico.demo.model.Servico;
+import com.AgendaServico.demo.model.Cliente;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
-public interface ServicoRepository extends JpaRepository<Servico, Long> {
+public interface AgendamentoRepository extends JpaRepository<Agendamento, Long> {
+
+    List<Agendamento> findByClienteId(Long clienteId);
+
 }
