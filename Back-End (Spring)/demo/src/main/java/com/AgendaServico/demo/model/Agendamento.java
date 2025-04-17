@@ -3,10 +3,10 @@ package com.AgendaServico.demo.model;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.Set;
 
 @Entity
 @Getter
@@ -15,32 +15,33 @@ public class Agendamento {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer idAgendamento;
 
     @ManyToOne
-    @JoinColumn(name = "cliente_id", nullable = false)
+    @JoinColumn(name = "id_cliente")
     private Cliente cliente;
 
-    @ManyToMany
-    @JoinTable(
-            name = "agendamento_servicos",
-            joinColumns = @JoinColumn(name = "agendamento_id"),
-            inverseJoinColumns = @JoinColumn(name = "servico_id")
-    )
-    private Set<Servico> servicos;
+    @ManyToOne
+    @JoinColumn(name = "id_servico")
+    private Servico servico;
 
-    @Column(nullable = false)
-    private LocalDateTime dataHoraAgendamento;
+    @ManyToOne
+    @JoinColumn(name = "id_barbeiro")
+    private Barbeiro barbeiro;
 
-    public Agendamento (){
+    private LocalDateTime dataHora;
 
+    private Boolean stats;
+
+    public Agendamento() {
     }
 
-    public Agendamento(Long id, Cliente cliente, Set<Servico> servicos, LocalDateTime dataHoraAgendamento) {
-        this.id = id;
+    public Agendamento(Cliente cliente, Servico servico, Barbeiro barbeiro, LocalDateTime dataHora, Boolean stats) {
         this.cliente = cliente;
-        this.servicos = servicos;
-        this.dataHoraAgendamento = dataHoraAgendamento;
+        this.servico = servico;
+        this.barbeiro = barbeiro;
+        this.dataHora = dataHora;
+        this.stats = stats;
     }
 
 }

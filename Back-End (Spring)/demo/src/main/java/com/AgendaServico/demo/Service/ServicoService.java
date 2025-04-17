@@ -2,30 +2,47 @@ package com.AgendaServico.demo.Service;
 
 import com.AgendaServico.demo.model.Servico;
 import com.AgendaServico.demo.Repository.ServicoRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
+@Service
 public class ServicoService {
 
+    private final ServicoRepository servicoRepository;
+
     @Autowired
-    ServicoRepository repository;
-
-    public List<Servico> listarTodos(){
-        return repository.findAll();
+    public ServicoService(ServicoRepository servicoRepository) {
+        this.servicoRepository = servicoRepository;
     }
 
-    public Servico salvar(Servico servico) {
-        return repository.save(servico);
+    public List<Servico> listarTodos() {
+        return servicoRepository.findAll();
     }
 
-    public Optional<Servico> buscarporId(Long id) {
-        return repository.findById(id);
+    public Servico criarServico(Servico servico) {
+        return servicoRepository.save(servico);
     }
 
-    public void deletar (Long id) {
-        repository.deleteById(id);
+    public Servico atualizarServico(Integer id, Servico servico) {
+        if (servicoRepository.existsById(id)) {
+            servico.setIdServico(id);
+            return servicoRepository.save(servico);
+        } else {
+            throw new EntityNotFoundException("Serviço não encontrado");
+        }
+    }
+
+    public void excluirServico(Integer id) {
+        if (servicoRepository.existsById(id)) {
+            servicoRepository.deleteById(id);
+        } else {
+            throw new EntityNotFoundException("Serviço não encontrado");
+        }
     }
 
 }
+
+

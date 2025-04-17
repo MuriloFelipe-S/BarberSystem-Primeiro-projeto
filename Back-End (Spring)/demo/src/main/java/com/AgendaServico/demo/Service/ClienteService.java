@@ -3,6 +3,7 @@ package com.AgendaServico.demo.Service;
 
 import com.AgendaServico.demo.model.Cliente;
 import com.AgendaServico.demo.Repository.ClienteRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,24 +13,36 @@ import java.util.Optional;
 @Service
 public class ClienteService {
 
+    private final ClienteRepository clienteRepository;
+
     @Autowired
-    private ClienteRepository repository;
-
-    public List<Cliente> listarTodos(){
-        return repository.findAll();
+    public ClienteService(ClienteRepository clienteRepository) {
+        this.clienteRepository = clienteRepository;
     }
 
-    public Cliente salvar(Cliente cliente) {
-
-        return repository.save(cliente);
+    public List<Cliente> listarTodos() {
+        return clienteRepository.findAll();
     }
 
-    public Optional<Cliente> buscarporId(Long id) {
-        return repository.findById(id);
+    public Cliente criarCliente(Cliente cliente) {
+        return clienteRepository.save(cliente);
     }
 
-    public void deletar (Long id) {
-        repository.deleteById(id);
+    public Cliente atualizarCliente(Integer id, Cliente cliente) {
+        if (clienteRepository.existsById(id)) {
+            cliente.setIdCliente(id);
+            return clienteRepository.save(cliente);
+        } else {
+            throw new EntityNotFoundException("Cliente não encontrado");
+        }
+    }
+
+    public void excluirCliente(Integer id) {
+        if (clienteRepository.existsById(id)) {
+            clienteRepository.deleteById(id);
+        } else {
+            throw new EntityNotFoundException("Cliente não encontrado");
+        }
     }
 
 }

@@ -15,10 +15,9 @@ public class Servico {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // indica para o banco que o id tem que ser gerado automaticamente
-    private Long id;
+    private Integer idServico;
 
     @NotBlank(message = "Nome do servico obrigatorio") //msg de erro caso nao seja inserido nada no campo
-    @Size(message = "nome do servico deve ter no maximo 30 caracteres") //msg de caracteres maximo
     @Column(nullable = false, length = 30) // indica que o campo nao pode ser nulo (nullable = false), length indica quantidade de caracteres (100)
     private String tipo;
 
@@ -26,14 +25,13 @@ public class Servico {
     @Column(nullable = false)
     private Double valor;
 
-    @ManyToMany(mappedBy = "servicos")
+    @OneToMany(mappedBy = "servico")
     private Set<Agendamento> agendamentos;
 
     public Servico() {
     }
 
-    public Servico(Long id, String tipo, Double valor) {
-        this.id = id;
+    public Servico(String tipo, Double valor) {
         this.tipo = tipo;
         this.valor = valor;
     }

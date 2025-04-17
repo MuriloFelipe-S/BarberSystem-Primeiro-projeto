@@ -1,8 +1,7 @@
 package com.AgendaServico.demo.controller;
 
+import com.AgendaServico.demo.Service.BarbeiroService;
 import com.AgendaServico.demo.model.Barbeiro;
-import com.AgendaServico.demo.Repository.BarbeiroRepository;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,51 +11,31 @@ import java.util.List;
 @RequestMapping("/barbeiro")
 public class BarbeiroController {
 
+    private final BarbeiroService barbeiroService;
+
     @Autowired
-    private BarbeiroRepository barbeiroRepository;
-
-    @GetMapping // requisição GET (lista todos os barbeiros) → ex: GET /Barbeiro
-    public List<Barbeiro> listarBarbeiro() {
-        return barbeiroRepository.findAll();
+    public BarbeiroController(BarbeiroService barbeiroService) {
+        this.barbeiroService = barbeiroService;
     }
 
-    @PostMapping // requisição POST (cria um novo cliente) → ex: POST /Cliente
-    public Barbeiro criarBarbeiro(@RequestBody @Valid Barbeiro barbeiro) {
-
-        return barbeiroRepository.save(barbeiro);
-
+    @GetMapping
+    public List<Barbeiro> listarTodos() {
+        return barbeiroService.listarTodos();
     }
 
-    @GetMapping("/{id}")
-    public Barbeiro buscarPorId(@PathVariable Long id) {
-
-        return barbeiroRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Barbeiro nao encontrado com o id: " + id));
-
+    @PostMapping
+    public Barbeiro criarBarbeiro(@RequestBody Barbeiro barbeiro) {
+        return barbeiroService.criarBarbeiro(barbeiro);
     }
 
-    @PutMapping("/{id}") // requisição PUT (atualiza um barbeiro) → ex: PUT /Barbeiro/1 <-- id
-    public Barbeiro atualizarBarbeiro(@PathVariable Long id, @RequestBody Barbeiro barbeiroAtualizado) {
-
-        Barbeiro barbeiro = barbeiroRepository.findById(id) // buscando barbeiro existente
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado com o id: " + id)); // erro se o cliente nao existe
-
-        // atualiza as informacoes do cliente
-        barbeiro.setNome(barbeiroAtualizado.getNome());
-        barbeiro.setSalario(barbeiroAtualizado.getSalario());
-
-        return barbeiroRepository.save(barbeiro); // salva as alteracoes
-
+    @PutMapping("/{id}")
+    public Barbeiro atualizarBarbeiro(@PathVariable Integer id, @RequestBody Barbeiro barbeiro) {
+        return barbeiroService.atualizarBarbeiro(id, barbeiro);
     }
 
     @DeleteMapping("/{id}")
-    public void deletarBarbeiro(@PathVariable Long id) {
-
-        if (!barbeiroRepository.existsById(id)) {
-            throw new RuntimeException("Barbeiro com ID " + id + " não encontrado.");
-        }
-
-        barbeiroRepository.deleteById(id);
+    public void excluirBarbeiro(@PathVariable Integer id) {
+        barbeiroService.excluirBarbeiro(id);
     }
 
 }

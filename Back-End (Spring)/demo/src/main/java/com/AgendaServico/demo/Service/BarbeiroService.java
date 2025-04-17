@@ -5,6 +5,7 @@ import com.AgendaServico.demo.Repository.BarbeiroRepository;
 import com.AgendaServico.demo.Repository.ClienteRepository;
 import com.AgendaServico.demo.model.Barbeiro;
 import com.AgendaServico.demo.model.Cliente;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,24 +15,37 @@ import java.util.Optional;
 @Service
 public class BarbeiroService {
 
-    @Autowired
-    private BarbeiroRepository barbeiroRepository;
+    private final BarbeiroRepository barbeiroRepository;
 
-    public List<Barbeiro> listarTodos(){
+    @Autowired
+    public BarbeiroService(BarbeiroRepository barbeiroRepository) {
+        this.barbeiroRepository = barbeiroRepository;
+    }
+
+    public List<Barbeiro> listarTodos() {
         return barbeiroRepository.findAll();
     }
 
-    public Barbeiro salvar(Barbeiro barbeiro) {
-
+    public Barbeiro criarBarbeiro(Barbeiro barbeiro) {
         return barbeiroRepository.save(barbeiro);
     }
 
-    public Optional<Barbeiro> buscarporId(Long id) {
-        return barbeiroRepository.findById(id);
+    public Barbeiro atualizarBarbeiro(Integer id, Barbeiro barbeiro) {
+        if (barbeiroRepository.existsById(id)) {
+            barbeiro.setIdBarbeiro(id);
+            return barbeiroRepository.save(barbeiro);
+        } else {
+            throw new EntityNotFoundException("Barbeiro não encontrado");
+        }
     }
 
-    public void deletar (Long id) {
-        barbeiroRepository.deleteById(id);
+    public void excluirBarbeiro(Integer id) {
+        if (barbeiroRepository.existsById(id)) {
+            barbeiroRepository.deleteById(id);
+        } else {
+            throw new EntityNotFoundException("Barbeiro não encontrado");
+        }
     }
+
 
 }

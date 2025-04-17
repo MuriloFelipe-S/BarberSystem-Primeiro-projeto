@@ -5,9 +5,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface BarbeiroRepository extends JpaRepository<Barbeiro, Long> {
+public interface BarbeiroRepository extends JpaRepository<Barbeiro, Integer> {
 
     // extends JpaRepository<...> --> Importa os métodos prontos do CRUD
-    // <Barbeiro, Long> --> entidade que sera gerenciada e tipo de chave primaria
+    // <Barbeiro, Integer> --> entidade que sera gerenciada e tipo de chave primaria
 
 }

@@ -3,34 +3,46 @@ package com.AgendaServico.demo.Service;
 
 import com.AgendaServico.demo.Repository.AgendamentoRepository;
 import com.AgendaServico.demo.model.Agendamento;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class AgendamentoService {
 
 
-    @Autowired
-    private AgendamentoRepository agendamentoRepository;
+    private final AgendamentoRepository agendamentoRepository;
 
-    public List<Agendamento> listarTodos(){
+    @Autowired
+    public AgendamentoService(AgendamentoRepository agendamentoRepository) {
+        this.agendamentoRepository = agendamentoRepository;
+    }
+
+    public List<Agendamento> listarAgendamento() {
         return agendamentoRepository.findAll();
     }
 
-    public Agendamento salvar(Agendamento agendamento) {
-
+    public Agendamento criarAgendamento(Agendamento agendamento) {
         return agendamentoRepository.save(agendamento);
     }
 
-    public Optional<Agendamento> buscarporId(Long id) {
-        return agendamentoRepository.findById(id);
+    public Agendamento atualizarAgendamento(Integer id, Agendamento agendamento) {
+        if (agendamentoRepository.existsById(id)) {
+            agendamento.setIdAgendamento(id);
+            return agendamentoRepository.save(agendamento);
+        } else {
+            throw new EntityNotFoundException("Usuário não encontrado");
+        }
     }
 
-    public void deletar (Long id) {
-        agendamentoRepository.deleteById(id);
+    public void excluirAgendamento(Integer id) {
+        if (agendamentoRepository.existsById(id)) {
+            agendamentoRepository.deleteById(id);
+        } else {
+            throw new EntityNotFoundException("Usuário não encontrado");
+        }
     }
 
 }

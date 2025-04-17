@@ -15,27 +15,18 @@ public class Cliente {
 
     @Id // referenciando id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // criando id autoincrementado
-    private Long id;
+    private Integer idCliente;
 
     @NotBlank(message = "Nome é obrigatorio") //msg de erro caso nao seja inserido nada no campo
-    @Size(message = "Nome deve ter no maximo 100 caracteres") //msg de caracteres maximo
     @Column(nullable = false, length = 100) // indica que o campo nao pode ser nulo (nullable = false), length indica quantidade de caracteres (100)
     private String nome;
 
-    @NotBlank(message = "Email é obrigatorio")
-    @Size(message = "Email deve ter no maximo 100 caracteres")
-    @Column(nullable = false, length = 100)
-    private String email;
-
     @NotBlank(message = "Telefone é obrigatorio")
-    @Size(message = "Maximo de 14 caracteres")
     @Column(nullable = false, length = 14)
     private String tell;
 
-    public Cliente(Long id, String nome, String email, String tell) { //construtor padrao
-        this.id = id;
+    public Cliente(String nome, String tell) { //construtor padrao
         this.nome = nome;
-        this.email = email;
         this.tell = tell;
     }
 

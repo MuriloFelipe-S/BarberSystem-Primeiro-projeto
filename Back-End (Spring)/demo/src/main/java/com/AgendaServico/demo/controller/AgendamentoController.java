@@ -1,10 +1,8 @@
 package com.AgendaServico.demo.controller;
 
 
-import com.AgendaServico.demo.Repository.AgendamentoRepository;
+import com.AgendaServico.demo.Service.AgendamentoService;
 import com.AgendaServico.demo.model.Agendamento;
-import com.AgendaServico.demo.model.Barbeiro;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,41 +12,31 @@ import java.util.List;
 @RequestMapping("/agenda")
 public class AgendamentoController {
 
+    private final AgendamentoService agendamentoService;
+
     @Autowired
-    private AgendamentoRepository agendamentoRepository;
-
-    @GetMapping
-    public List<Agendamento> listarAgenda(){
-
-        return agendamentoRepository.findAll();
-
+    public AgendamentoController(AgendamentoService agendamentoService) {
+        this.agendamentoService = agendamentoService;
     }
 
-    @GetMapping("/{id}")
-    public Agendamento buscarPorId(@PathVariable Long id){
-
-        return agendamentoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Agendamento nao encontrado com o id: " + id));
-
+    @GetMapping
+    public List<Agendamento> listarAgendamento() {
+        return agendamentoService.listarAgendamento();
     }
 
     @PostMapping
-    public Agendamento criarAgendamento(@RequestBody @Valid Agendamento agendamento){
-
-        return agendamentoRepository.save(agendamento);
-
+    public Agendamento criarAgendamento(@RequestBody Agendamento agendamento) {
+        return agendamentoService.criarAgendamento(agendamento);
     }
 
-    @PutMapping("/{id}") // requisição PUT (atualiza um Agendamento) → ex: PUT /Agendamento/1 <-- id do Agendamento
-
-    public Agendamento atualizarAgenda(@PathVariable Long id, @RequestBody Agendamento agendaAtualizada){
-
-        Agendamento agendamento = agendamentoRepository.findById(id) // buscando Agendamento existente
-                .orElseThrow(() -> new RuntimeException("Agendamento não encontrado com o id: " + id)); // erro se a agenda nao existe
-
-        agendamento.setCliente(agendaAtualizada.getCliente());
-        agendamento.setDataHoraAgendamento(agendaAtualizada.getDataHoraAgendamento());
-
-        return agendamentoRepository.save(agendamento); // salva alteracao
+    @PutMapping("/{id}")
+    public Agendamento atualizarAgendamento(@PathVariable Integer id, @RequestBody Agendamento usuario) {
+        return agendamentoService.atualizarAgendamento(id, usuario);
     }
+
+    @DeleteMapping("/{id}")
+    public void excluirAgendamento(@PathVariable Integer id) {
+        agendamentoService.excluirAgendamento(id);
+    }
+
 }

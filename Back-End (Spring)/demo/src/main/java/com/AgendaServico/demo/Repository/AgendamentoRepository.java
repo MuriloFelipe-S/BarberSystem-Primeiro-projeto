@@ -8,8 +8,9 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface AgendamentoRepository extends JpaRepository<Agendamento, Long> {
+public interface AgendamentoRepository extends JpaRepository<Agendamento, Integer> {
 
-    List<Agendamento> findByClienteId(Long clienteId);
+    // extends JpaRepository<...> --> Importa os métodos prontos do CRUD
+    // <Agendamento, Integer> --> entidade que sera gerenciada e tipo de chave primaria (id)
 
 }
