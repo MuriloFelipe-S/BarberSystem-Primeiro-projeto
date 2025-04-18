@@ -1,0 +1,32 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #121212;
+    color: #fff;
+    padding: 20px;
+  }
+  
+  input, button {
+    margin: 5px;
+    padding: 8px;
+    border-radius: 5px;
+    border: none;
+  }
+  
+  button {
+    background-color: #00c851;
+    color: #fff;
+    cursor: pointer;
+  }
+  
+  ul {
+    list-style-type: none;
+    padding-left: 0;
+  }
+  
+  li {
+    margin: 5px 0;
+    background: #1e1e1e;
+    padding: 10px;
+    border-radius: 5px;
+  }
+  

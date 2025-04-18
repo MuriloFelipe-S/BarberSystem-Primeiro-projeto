@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Agenda Barbearia</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Agenda de Clientes</h1>
+
+  <form id="clienteForm">
+    <input type="text" id="nome" placeholder="Nome" required />
+    <input type="text" id="telefone" placeholder="Telefone" required />
+    <input type="hidden" id="clienteId" />
+    <button type="submit" id="btnCadastrar">Cadastrar</button>
+    <button type="button" id="btnAtualizar" style="display:none;">Atualizar</button>
+  </form>
+
+  <h2>Lista de Clientes</h2>
+  <ul id="listaClientes"></ul>
+
+  <script src="script.js"></script>
+</body>
+</html>
