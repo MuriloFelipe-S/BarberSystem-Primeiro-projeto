@@ -1,81 +1,102 @@
-const apiUrl = 'http://localhost:8080/clientes';
+// Adiciona o evento de envio do formulário
+document.getElementById('form').addEventListener('submit', async function(event) {
+  event.preventDefault();
 
-document.addEventListener('DOMContentLoaded', () => {
-  listarClientes();
+  const nome = document.getElementById('nome').value;
+  let telefone = document.getElementById('telefone').value;
 
-  const form = document.getElementById('clienteForm');
-  const btnCadastrar = document.getElementById('btnCadastrar');
-  const btnAtualizar = document.getElementById('btnAtualizar');
+  // Remover qualquer caractere não numérico do telefone antes de enviá-lo
+  telefone = telefone.replace(/\D/g, '');
 
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const nome = document.getElementById('nome').value;
-    const telefone = document.getElementById('telefone').value;
-    const clienteId = document.getElementById('clienteId').value;
+  const cliente = {
+    nome: nome,
+    telefone: telefone // Envia o telefone sem formatação
+  };
 
-    if (clienteId) {
-      // Atualizar
-      await fetch(`${apiUrl}/${clienteId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nome, telefone })
-      });
-      btnCadastrar.style.display = 'inline';
-      btnAtualizar.style.display = 'none';
+  try {
+    const response = await fetch('http://localhost:8080/cliente', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(cliente)
+    });
+
+    if (response.ok) {
+      alert('Cliente cadastrado com sucesso!');
+      document.getElementById('form').reset();
+      carregarClientes();
     } else {
-      // Criar
-      await fetch(apiUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nome, telefone })
-      });
+      alert('Erro ao cadastrar cliente.');
     }
-
-    form.reset();
-    document.getElementById('clienteId').value = '';
-    listarClientes();
-  });
-
-  btnAtualizar.addEventListener('click', () => {
-    form.dispatchEvent(new Event('submit'));
-  });
+  } catch (error) {
+    console.error('Erro na requisição:', error);
+    alert('Erro na comunicação com o servidor.');
+  }
 });
 
-async function listarClientes() {
-  const response = await fetch(apiUrl);
-  const clientes = await response.json();
-  const lista = document.getElementById('listaClientes');
-  lista.innerHTML = '';
+// Função para carregar os clientes cadastrados
+async function carregarClientes() {
+  try {
+    const resposta = await fetch('http://localhost:8080/cliente');
+    const clientes = await resposta.json();
 
-  clientes.forEach(cliente => {
-    const li = document.createElement('li');
-    li.textContent = `${cliente.nome} - ${cliente.telefone}`;
+    const lista = document.getElementById('lista-clientes');
+    lista.innerHTML = ''; // Limpa a lista antes de adicionar os novos clientes
 
-    const btnEditar = document.createElement('button');
-    btnEditar.textContent = 'Editar';
-    btnEditar.onclick = () => editarCliente(cliente);
-
-    const btnExcluir = document.createElement('button');
-    btnExcluir.textContent = 'Excluir';
-    btnExcluir.onclick = () => deletarCliente(cliente.id);
-
-    li.appendChild(btnEditar);
-    li.appendChild(btnExcluir);
-    lista.appendChild(li);
-  });
-}
-
-function editarCliente(cliente) {
-  document.getElementById('nome').value = cliente.nome;
-  document.getElementById('telefone').value = cliente.telefone;
-  document.getElementById('clienteId').value = cliente.id;
-  document.getElementById('btnCadastrar').style.display = 'none';
-  document.getElementById('btnAtualizar').style.display = 'inline';
-}
-
-async function deletarCliente(id) {
-  if (confirm('Deseja realmente excluir este cliente?')) {
-    await fetch(`${apiUrl}/${id}`, { method: 'DELETE' });
-    listarClientes();
+    clientes.forEach(c => {
+      const telefoneFormatado = formatarTelefone(c.telefone);
+      const li = document.createElement('li');
+      li.innerHTML = `
+        Nome:${c.nome}  Número: ${telefoneFormatado}
+        <button onclick="deletarCliente(${c.idCliente})">Excluir</button>
+      `;
+      lista.appendChild(li);
+    });
+  } catch (error) {
+    console.error('Erro ao carregar clientes:', error);
   }
 }
+
+// Função para deletar cliente
+async function deletarCliente(id) {
+  const confirmar = confirm("Tem certeza que deseja excluir este cliente?");
+  if (!confirmar) return;
+
+  try {
+    const response = await fetch(`http://localhost:8080/cliente/${id}`, {
+      method: 'DELETE'
+    });
+
+    if (response.ok) {
+      alert("Cliente excluído com sucesso!");
+      carregarClientes();
+    } else {
+      alert("Erro ao excluir cliente.");
+    }
+  } catch (error) {
+    console.error("Erro ao tentar excluir cliente:", error);
+    alert("Erro na comunicação com o servidor.");
+  }
+}
+
+// Função para formatar o telefone para o padrão (xx) xxxxx-xxxx
+function formatarTelefone(telefone) {
+  return telefone.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+}
+
+// Máscara para o campo de telefone
+document.getElementById('telefone').addEventListener('input', function(event) {
+  let telefone = this.value.replace(/\D/g, ''); // Remove tudo o que não for número
+  if (telefone.length <= 2) {
+    telefone = `(${telefone}`;
+  } else if (telefone.length <= 6) {
+    telefone = `(${telefone.slice(0, 2)}) ${telefone.slice(2)}`;
+  } else {
+    telefone = `(${telefone.slice(0, 2)}) ${telefone.slice(2, 7)}-${telefone.slice(7, 11)}`;
+  }
+  this.value = telefone; // Atualiza o valor do campo com a máscara
+});
+
+// Carrega clientes ao iniciar a página
+carregarClientes();

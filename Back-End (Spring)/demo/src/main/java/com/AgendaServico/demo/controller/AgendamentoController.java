@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "http://127.0.0.1:5500")
 @RestController
 @RequestMapping("/agenda")
 public class AgendamentoController {
@@ -30,8 +31,8 @@ public class AgendamentoController {
     }
 
     @PutMapping("/{id}")
-    public Agendamento atualizarAgendamento(@PathVariable Integer id, @RequestBody Agendamento usuario) {
-        return agendamentoService.atualizarAgendamento(id, usuario);
+    public Agendamento atualizarAgendamento(@PathVariable Integer id, @RequestBody Agendamento agendamento) {
+        return agendamentoService.atualizarAgendamento(id, agendamento);
     }
 
     @DeleteMapping("/{id}")

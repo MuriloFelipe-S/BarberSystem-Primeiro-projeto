@@ -23,11 +23,11 @@ public class Cliente {
 
     @NotBlank(message = "Telefone é obrigatorio")
     @Column(nullable = false, length = 14)
-    private String tell;
+    private String telefone;
 
-    public Cliente(String nome, String tell) { //construtor padrao
+    public Cliente(String nome, String telefone) { //construtor padrao
         this.nome = nome;
-        this.tell = tell;
+        this.telefone = telefone;
     }
 
     public Cliente() { // construtor para o JPA

@@ -1,23 +1,23 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
   <meta charset="UTF-8">
-  <title>Agenda Barbearia</title>
+  <title>Cadastro de Clientes</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Agenda de Clientes</h1>
+  <h1>Cadastro de Clientes</h1>
+  <form id="form">
+    <input type="text" id="nome" placeholder="Nome" required>
+    
+    <!-- Atualizando o campo telefone -->
+    <input type="tel" id="telefone" placeholder="Telefone" required maxlength="15">
 
-  <form id="clienteForm">
-    <input type="text" id="nome" placeholder="Nome" required />
-    <input type="text" id="telefone" placeholder="Telefone" required />
-    <input type="hidden" id="clienteId" />
-    <button type="submit" id="btnCadastrar">Cadastrar</button>
-    <button type="button" id="btnAtualizar" style="display:none;">Atualizar</button>
+    <button type="submit">Cadastrar</button>
   </form>
 
-  <h2>Lista de Clientes</h2>
-  <ul id="listaClientes"></ul>
+  <h2>Clientes cadastrados</h2>
+  <ul id="lista-clientes"></ul>
 
   <script src="script.js"></script>
 </body>

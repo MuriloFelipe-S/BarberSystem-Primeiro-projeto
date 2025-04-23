@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
-
+@CrossOrigin(origins = "http://127.0.0.1:5500")
 @RestController // indica que essa classe é um controller REST (vai responder em json)
 @RequestMapping("/cliente") //define o caminho base das rotas desse controller (localhost:8080/Cliente)
 public class ClienteController {
