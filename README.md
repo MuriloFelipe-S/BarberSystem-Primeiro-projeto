@@ -1,7 +1,7 @@
 # 🧔‍♂️ Agenda de Barbearia – Sistema de Gestão Completa
 
 [![Status](https://img.shields.io/badge/status-em%20desenvolvimento-yellow)]()  
-Projeto desenvolvido por [Murilo Felipe](www.linkedin.com/in/murilofelipe), com foco na **organização e automação de barbearias**, por meio de um sistema completo de gestão.
+Projeto desenvolvido por [Murilo Felipe](https://www.linkedin.com/in/murilofelipe/), com foco na **organização e automação de barbearias**, por meio de um sistema completo de gestão.
 
 ---
 
