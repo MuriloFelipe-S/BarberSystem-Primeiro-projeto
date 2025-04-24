@@ -1,102 +1,122 @@
-// Adiciona o evento de envio do formulário
-document.getElementById('form').addEventListener('submit', async function(event) {
+const modal = document.getElementById('modal');
+const abrirModal = document.getElementById('abrirModal');
+const fecharModal = document.querySelector('.close');
+const form = document.getElementById('form');
+let editandoId = null;
+
+// Abrir modal
+abrirModal.onclick = () => {
+  form.reset();
+  editandoId = null;
+  modal.style.display = 'flex';
+};
+
+// Fechar modal
+fecharModal.onclick = () => {
+  modal.style.display = 'none';
+};
+
+// Fechar modal clicando fora
+window.onclick = e => {
+  if (e.target == modal) modal.style.display = 'none';
+};
+
+// Enviar formulário
+form.addEventListener('submit', async function(event) {
   event.preventDefault();
 
-  const nome = document.getElementById('nome').value;
-  let telefone = document.getElementById('telefone').value;
+  const tipo = document.getElementById('tipo').value.trim();
+  const valor = parseFloat(document.getElementById('valor').value);
 
-  // Remover qualquer caractere não numérico do telefone antes de enviá-lo
-  telefone = telefone.replace(/\D/g, '');
+  if (!tipo || isNaN(valor) || valor < 0) {
+    alert("Preencha os dados corretamente.");
+    return;
+  }
 
-  const cliente = {
-    nome: nome,
-    telefone: telefone // Envia o telefone sem formatação
-  };
+  const servico = { tipo, valor };
+
+  const url = editandoId ? `http://localhost:8080/servico/${editandoId}` : 'http://localhost:8080/servico';
+  const metodo = editandoId ? 'PUT' : 'POST';
 
   try {
-    const response = await fetch('http://localhost:8080/cliente', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(cliente)
+    const response = await fetch(url, {
+      method: metodo,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(servico)
     });
 
     if (response.ok) {
-      alert('Cliente cadastrado com sucesso!');
-      document.getElementById('form').reset();
-      carregarClientes();
+      alert(`Serviço ${editandoId ? 'atualizado' : 'cadastrado'} com sucesso!`);
+      form.reset();
+      modal.style.display = 'none';
+      carregarServicos();
     } else {
-      alert('Erro ao cadastrar cliente.');
+      alert('Erro ao salvar serviço.');
     }
   } catch (error) {
-    console.error('Erro na requisição:', error);
     alert('Erro na comunicação com o servidor.');
   }
 });
 
-// Função para carregar os clientes cadastrados
-async function carregarClientes() {
+// Carregar serviços
+async function carregarServicos() {
   try {
-    const resposta = await fetch('http://localhost:8080/cliente');
-    const clientes = await resposta.json();
+    const resposta = await fetch('http://localhost:8080/servico');
+    const servicos = await resposta.json();
+    const lista = document.getElementById('lista-servicos');
+    lista.innerHTML = '';
 
-    const lista = document.getElementById('lista-clientes');
-    lista.innerHTML = ''; // Limpa a lista antes de adicionar os novos clientes
-
-    clientes.forEach(c => {
-      const telefoneFormatado = formatarTelefone(c.telefone);
+    servicos.forEach(s => {
       const li = document.createElement('li');
+
       li.innerHTML = `
-        Nome:${c.nome}  Número: ${telefoneFormatado}
-        <button onclick="deletarCliente(${c.idCliente})">Excluir</button>
+        <div class="info">
+          <div class="icon">💈</div>
+          <h3>${s.tipo}</h3>
+          <p class="valor">R$ ${s.valor.toFixed(2).replace('.', ',')}</p>
+        </div>
+        <div class="botoes">
+          <button class="editar" onclick="editarServico(${s.idServico}, '${s.tipo}', ${s.valor})">✎</button>
+          <button class="excluir" onclick="deletarServico(${s.idServico})">✕</button>
+        </div>
       `;
+
       lista.appendChild(li);
     });
   } catch (error) {
-    console.error('Erro ao carregar clientes:', error);
+    console.error('Erro ao carregar serviços:', error);
   }
 }
 
-// Função para deletar cliente
-async function deletarCliente(id) {
-  const confirmar = confirm("Tem certeza que deseja excluir este cliente?");
+// Deletar serviço
+async function deletarServico(id) {
+  const confirmar = confirm("Deseja excluir este serviço?");
   if (!confirmar) return;
 
   try {
-    const response = await fetch(`http://localhost:8080/cliente/${id}`, {
+    const response = await fetch(`http://localhost:8080/servico/${id}`, {
       method: 'DELETE'
     });
 
     if (response.ok) {
-      alert("Cliente excluído com sucesso!");
-      carregarClientes();
+      alert("Serviço excluído com sucesso!");
+      carregarServicos();
     } else {
-      alert("Erro ao excluir cliente.");
+      alert("Erro ao excluir serviço.");
     }
   } catch (error) {
-    console.error("Erro ao tentar excluir cliente:", error);
-    alert("Erro na comunicação com o servidor.");
+    alert("Erro ao se comunicar com o servidor.");
   }
 }
 
-// Função para formatar o telefone para o padrão (xx) xxxxx-xxxx
-function formatarTelefone(telefone) {
-  return telefone.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+// Editar serviço
+function editarServico(id, tipo, valor) {
+  document.getElementById('tipo').value = tipo;
+  document.getElementById('valor').value = valor;
+  form.querySelector('button').textContent = 'Atualizar';
+  editandoId = id;
+  modal.style.display = 'flex';
 }
 
-// Máscara para o campo de telefone
-document.getElementById('telefone').addEventListener('input', function(event) {
-  let telefone = this.value.replace(/\D/g, ''); // Remove tudo o que não for número
-  if (telefone.length <= 2) {
-    telefone = `(${telefone}`;
-  } else if (telefone.length <= 6) {
-    telefone = `(${telefone.slice(0, 2)}) ${telefone.slice(2)}`;
-  } else {
-    telefone = `(${telefone.slice(0, 2)}) ${telefone.slice(2, 7)}-${telefone.slice(7, 11)}`;
-  }
-  this.value = telefone; // Atualiza o valor do campo com a máscara
-});
-
-// Carrega clientes ao iniciar a página
-carregarClientes();
+// Inicia carregando os serviços
+carregarServicos();

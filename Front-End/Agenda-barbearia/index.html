@@ -2,23 +2,39 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
-  <title>Cadastro de Clientes</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadastro de Serviços</title>
   <link rel="stylesheet" href="style.css">
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </head>
 <body>
-  <h1>Cadastro de Clientes</h1>
-  <form id="form">
-    <input type="text" id="nome" placeholder="Nome" required>
-    
-    <!-- Atualizando o campo telefone -->
-    <input type="tel" id="telefone" placeholder="Telefone" required maxlength="15">
 
-    <button type="submit">Cadastrar</button>
-  </form>
+  <!-- Cabeçalho da página -->
+  <header>
+    <h1>Serviços da Barbearia</h1>
+    <button id="abrirModal"><i class="fas fa-plus-circle"></i> Novo Serviço</button>
+  </header>
 
-  <h2>Clientes cadastrados</h2>
-  <ul id="lista-clientes"></ul>
+  <!-- Modal para cadastrar serviço -->
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Cadastrar Serviço</h2>
+      <form id="form">
+        <input type="text" id="tipo" placeholder="Tipo de serviço" required>
+        <input type="number" step="0.01" id="valor" placeholder="Valor (R$)" required>
+        <button type="submit">Cadastrar</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Seção onde os serviços cadastrados serão listados -->
+  <section>
+    <h2>Serviços Cadastrados</h2>
+    <ul id="lista-servicos"></ul>
+  </section>
 
   <script src="script.js"></script>
+
 </body>
 </html>
