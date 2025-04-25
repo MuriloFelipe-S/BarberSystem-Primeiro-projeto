@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BarberSys - Sistema de Gestão</title>
+
+  <!-- Estilo do layout principal -->
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+  <div class="container-geral">
+    <!-- Menu lateral -->
+    <aside class="menu-lateral">
+      <h1 class="logo">💈 BarberSys</h1>
+      <nav>
+        <ul>
+          <li><a href="#" data-page="servico">📋 Serviços</a></li>
+          <li><a href="#" data-page="agendamentos">📅 Agendamentos</a></li>
+          <li><a href="#" data-page="clientes">🧑‍💼 Clientes</a></li>
+          <li><a href="#" data-page="barbeiros">✂️ Profissionais</a></li>
+          <li><a href="#" data-page="configuracoes">⚙️ Configurações</a></li>
+        </ul>
+      </nav>
+    </aside>
+
+    <!-- Área de conteúdo dinâmica -->
+    <main class="conteudo">
+      <div id="conteudo-dinamico">
+        <!-- Aqui será carregado dinamicamente o conteúdo de servico/index.html e outros -->
+      </div>
+    </main>
+  </div>
+
+  <!-- Script para navegação SPA simples -->
+  <script src="script.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <title>Document</title>
+  </head>
+  <body>
+    <!-- agendamentos/index.html -->
+    <div class="container">
+      <h1>Agendamentos</h1>
+      <button id="abrirModal" class="btn">Novo Agendamento</button>
+
+      <ul id="lista-agendamentos" class="lista-agendamentos"></ul>
+    </div>
+
+    <!-- Modal -->
+    <div id="modal" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2 id="modal-title">Novo Agendamento</h2>
+        <form id="form">
+          <label for="cliente">Cliente:</label>
+          <select id="cliente" required></select>
+
+          <label for="barbeiro">Barbeiro:</label>
+          <select id="barbeiro" required></select>
+
+          <label for="servico">Serviço:</label>
+          <select id="servico" required></select>
+
+          <label for="dataHora">Data e Hora:</label>
+          <input type="datetime-local" id="dataHora" required />
+
+          <label for="status">Status:</label>
+          <select id="status" required>
+            <option value="true">Confirmado</option>
+            <option value="false">Pendente</option>
+          </select>
+
+          <button type="submit" class="btn">Salvar</button>
+        </form>
+      </div>
+    </div>
+    <script src="script.js"></script>
+  </body>
+</html>

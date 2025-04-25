@@ -1,0 +1,172 @@
+/* Reset básico */
+body, h1, h2, ul, li, p, a, input, button {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #f5f5f5;
+  }
+  
+  /* Layout principal */
+  .container-geral {
+    display: flex;
+    height: 100vh;
+  }
+  
+  .menu-lateral {
+    width: 230px;
+    background-color: #20232a;
+    color: white;
+    padding: 20px;
+  }
+  
+  .menu-lateral .logo {
+    font-size: 24px;
+    margin-bottom: 30px;
+    text-align: center;
+  }
+  
+  .menu-lateral ul {
+    list-style: none;
+  }
+  .menu-lateral li {
+    margin-bottom: 15px;
+  }
+  .menu-lateral a {
+    color: white;
+    text-decoration: none;
+    display: block;
+    padding: 10px;
+    border-radius: 4px;
+    transition: 0.3s;
+  }
+  .menu-lateral a:hover,
+  .menu-lateral a.ativo {
+    background-color: #007bff;
+  }
+  
+  .menu-lateral a.ativo {
+    background-color: #007bff;
+    color: white !important;
+  }  
+
+  .conteudo {
+    flex: 1;
+    padding: 40px;
+    overflow-y: auto;
+  }
+  
+  button {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 4px;
+    background-color: #007bff;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 20px;
+  }
+  button:hover {
+    background-color: #0056b3;
+  }
+  
+  .lista-servicos {
+    margin-top: 30px;
+    list-style: none;
+    padding: 0;
+  }
+  .lista-servicos li {
+    background-color: white;
+    margin-bottom: 12px;
+    padding: 15px 20px;
+    border-radius: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .lista-servicos .info {
+    display: flex;
+    align-items: center;
+  }
+  .lista-servicos .icon {
+    font-size: 24px;
+    margin-right: 15px;
+  }
+  .lista-servicos h3 {
+    margin: 0;
+  }
+  .lista-servicos .valor {
+    color: #28a745;
+  }
+  
+  /* Botões editar/excluir */
+  .botoes button {
+    margin-left: 8px;
+    font-size: 18px;
+    padding: 6px 10px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+  }
+  .editar {
+    background-color: #ffc107;
+    color: white;
+  }
+  .excluir {
+    background-color: #dc3545;
+    color: white;
+  }
+  
+  /* Modal */
+  .modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+  }
+  
+  .modal-content {
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    width: 400px;
+    position: relative;
+  }
+  
+  .modal-content h3 {
+    margin-bottom: 20px;
+  }
+  
+  .modal-content label {
+    display: block;
+    margin-bottom: 6px;
+    margin-top: 15px;
+  }
+  .modal-content input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 4px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  .modal-content .close {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    font-size: 24px;
+    cursor: pointer;
+    color: #999;
+  }
+  .modal-content .close:hover {
+    color: #000;
+  }
+  

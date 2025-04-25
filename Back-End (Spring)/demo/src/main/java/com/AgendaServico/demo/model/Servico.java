@@ -1,6 +1,7 @@
 package com.AgendaServico.demo.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -26,6 +27,7 @@ public class Servico {
     private Double valor;
 
     @OneToMany(mappedBy = "servico")
+    @JsonIgnore
     private Set<Agendamento> agendamentos;
 
     public Servico() {
