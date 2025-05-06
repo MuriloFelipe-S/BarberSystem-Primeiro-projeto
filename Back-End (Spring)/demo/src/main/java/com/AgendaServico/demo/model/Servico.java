@@ -1,6 +1,7 @@
 package com.AgendaServico.demo.model;
 
 
+import com.AgendaServico.demo.Listeners.ServicoListener;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -14,6 +15,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
+@EntityListeners(ServicoListener.class)
 public class Servico {
 
     @Id

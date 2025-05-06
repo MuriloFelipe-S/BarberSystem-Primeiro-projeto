@@ -1,17 +1,17 @@
 package com.AgendaServico.demo.model;
 
-
+import com.AgendaServico.demo.Listeners.AgendamentoListener;
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
-
+import jakarta.persistence.EntityListeners;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
 @Getter
 @Setter
+@EntityListeners({AgendamentoListener.class})
 public class Agendamento {
 
     @Id
@@ -47,4 +47,5 @@ public class Agendamento {
         this.dataHora = dataHora;
         this.stats = stats;
     }
+
 }

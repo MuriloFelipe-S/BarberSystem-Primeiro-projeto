@@ -1,14 +1,16 @@
 package com.AgendaServico.demo.Service;
 
 import com.AgendaServico.demo.Repository.AgendamentoRepository;
-import com.AgendaServico.demo.Repository.ClienteRepository; // Importe o repositório Cliente
-import com.AgendaServico.demo.Repository.BarbeiroRepository; // Importe o repositório Barbeiro
-import com.AgendaServico.demo.Repository.ServicoRepository;  // Importe o repositório Servico
+import com.AgendaServico.demo.Repository.ClienteRepository;
+import com.AgendaServico.demo.Repository.BarbeiroRepository;
+import com.AgendaServico.demo.Repository.ServicoRepository;
 import com.AgendaServico.demo.model.Agendamento;
-import com.AgendaServico.demo.model.Cliente;  // Importe o modelo Cliente
-import com.AgendaServico.demo.model.Barbeiro; // Importe o modelo Barbeiro
-import com.AgendaServico.demo.model.Servico;  // Importe o modelo Servico
+import com.AgendaServico.demo.model.Cliente;
+import com.AgendaServico.demo.model.Barbeiro;
+import com.AgendaServico.demo.model.Servico;
 import jakarta.persistence.EntityNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,10 +20,12 @@ import java.util.Optional;
 @Service
 public class AgendamentoService {
 
+    private static final Logger logger = LoggerFactory.getLogger(AgendamentoService.class);
+
     private final AgendamentoRepository agendamentoRepository;
-    private final ClienteRepository clienteRepository; // Adicione o repositório Cliente
-    private final BarbeiroRepository barbeiroRepository; // Adicione o repositório Barbeiro
-    private final ServicoRepository servicoRepository;   // Adicione o repositório Servico
+    private final ClienteRepository clienteRepository;
+    private final BarbeiroRepository barbeiroRepository;
+    private final ServicoRepository servicoRepository;
 
     @Autowired
     public AgendamentoService(AgendamentoRepository agendamentoRepository,
@@ -34,48 +38,105 @@ public class AgendamentoService {
         this.servicoRepository = servicoRepository;
     }
 
-    // Métodos existentes
-
     public List<Agendamento> listarAgendamento() {
-        return agendamentoRepository.findAll();
+        try {
+            List<Agendamento> lista = agendamentoRepository.findAll();
+            logger.info("Agendamentos carregados com sucesso. Total: {}", lista.size());
+            return lista;
+        } catch (Exception e) {
+            logger.error("Erro ao listar agendamentos", e);
+            throw e;
+        }
     }
 
     public Agendamento criarAgendamento(Agendamento agendamento) {
-        return agendamentoRepository.save(agendamento);
+        try {
+            Agendamento novo = agendamentoRepository.save(agendamento);
+            logger.info("Agendamento criado: ID {}", novo.getIdAgendamento());
+            return novo;
+        } catch (Exception e) {
+            logger.error("Erro ao criar agendamento", e);
+            throw e;
+        }
     }
 
     public Agendamento atualizarAgendamento(Integer id, Agendamento agendamento) {
-        if (agendamentoRepository.existsById(id)) {
-            agendamento.setIdAgendamento(id);
-            return agendamentoRepository.save(agendamento);
-        } else {
-            throw new EntityNotFoundException("Usuário não encontrado");
+        try {
+            if (agendamentoRepository.existsById(id)) {
+                agendamento.setIdAgendamento(id);
+                Agendamento atualizado = agendamentoRepository.save(agendamento);
+                logger.info("Agendamento atualizado: ID {}", id);
+                return atualizado;
+            } else {
+                logger.warn("Tentativa de atualizar agendamento inexistente: ID {}", id);
+                throw new EntityNotFoundException("Agendamento não encontrado");
+            }
+        } catch (Exception e) {
+            logger.error("Erro ao atualizar agendamento: ID {}", id, e);
+            throw e;
         }
     }
 
     public void excluirAgendamento(Integer id) {
-        if (agendamentoRepository.existsById(id)) {
-            agendamentoRepository.deleteById(id);
-        } else {
-            throw new EntityNotFoundException("Usuário não encontrado");
+        try {
+            if (agendamentoRepository.existsById(id)) {
+                agendamentoRepository.deleteById(id);
+                logger.info("Agendamento excluído: ID {}", id);
+            } else {
+                logger.warn("Tentativa de excluir agendamento inexistente: ID {}", id);
+                throw new EntityNotFoundException("Agendamento não encontrado");
+            }
+        } catch (Exception e) {
+            logger.error("Erro ao excluir agendamento: ID {}", id, e);
+            throw e;
         }
     }
 
-    // Métodos para listar clientes, barbeiros e serviços
-
     public List<Cliente> listarClientes() {
-        return clienteRepository.findAll();  // Consulta todos os clientes
+        try {
+            List<Cliente> clientes = clienteRepository.findAll();
+            logger.info("Clientes carregados: {}", clientes.size());
+            return clientes;
+        } catch (Exception e) {
+            logger.error("Erro ao listar clientes", e);
+            throw e;
+        }
     }
 
     public List<Barbeiro> listarBarbeiros() {
-        return barbeiroRepository.findAll();  // Consulta todos os barbeiros
+        try {
+            List<Barbeiro> barbeiros = barbeiroRepository.findAll();
+            logger.info("Barbeiros carregados: {}", barbeiros.size());
+            return barbeiros;
+        } catch (Exception e) {
+            logger.error("Erro ao listar barbeiros", e);
+            throw e;
+        }
     }
 
     public List<Servico> listarServicos() {
-        return servicoRepository.findAll();  // Consulta todos os serviços
+        try {
+            List<Servico> servicos = servicoRepository.findAll();
+            logger.info("Serviços carregados: {}", servicos.size());
+            return servicos;
+        } catch (Exception e) {
+            logger.error("Erro ao listar serviços", e);
+            throw e;
+        }
     }
 
     public Optional<Agendamento> findById(Integer id) {
-        return Optional.empty();
+        try {
+            Optional<Agendamento> agendamento = agendamentoRepository.findById(id);
+            if (agendamento.isPresent()) {
+                logger.info("Agendamento encontrado: ID {}", id);
+            } else {
+                logger.warn("Agendamento não encontrado: ID {}", id);
+            }
+            return agendamento;
+        } catch (Exception e) {
+            logger.error("Erro ao buscar agendamento por ID: {}", id, e);
+            throw e;
+        }
     }
 }

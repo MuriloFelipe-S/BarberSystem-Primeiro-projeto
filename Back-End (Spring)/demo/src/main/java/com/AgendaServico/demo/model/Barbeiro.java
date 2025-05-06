@@ -1,5 +1,6 @@
 package com.AgendaServico.demo.model;
 
+import com.AgendaServico.demo.Listeners.BarbeiroListener;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
@@ -9,6 +10,7 @@ import java.time.LocalDate;
 @Entity
 @Getter
 @Setter
+@EntityListeners(BarbeiroListener.class)
 public class Barbeiro {
 
     @Id // referenciando o id

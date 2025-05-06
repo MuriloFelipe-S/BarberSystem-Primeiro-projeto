@@ -122,7 +122,10 @@ function inicializarAgendamentosPage() {
       lista.innerHTML = "";
 
       agendamentos.forEach(a => {
-        if (!a.cliente?.nome || !a.servicos?.length) return;
+        if (!a.cliente?.nome || !a.servicos?.length) {
+          console.warn("Agendamento ignorado (incompleto):", a);
+          return;
+        }
 
         const li = document.createElement("li");
         li.innerHTML = `

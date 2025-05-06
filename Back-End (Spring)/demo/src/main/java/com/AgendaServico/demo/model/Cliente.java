@@ -1,6 +1,7 @@
 package com.AgendaServico.demo.model;
 
 
+import com.AgendaServico.demo.Listeners.ClienteListener;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,6 +10,7 @@ import jakarta.validation.constraints.Size;
 
 
 @Entity //representa uma tabela
+@EntityListeners(ClienteListener.class)
 @Getter // lombok getter
 @Setter // lombok setter
 public class Cliente {
