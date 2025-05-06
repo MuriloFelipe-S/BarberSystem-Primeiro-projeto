@@ -146,7 +146,7 @@ h1 {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgb(39, 39, 39);
   display: none;
   justify-content: center;
   align-items: center;
@@ -198,3 +198,43 @@ input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
+
+
+#servicos-container {
+  max-height: 250px;
+  overflow-y: auto;
+  padding-right: 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background-color: var(--bg-card);
+  border-radius: 8px;
+  padding: 10px;
+}
+
+/* Cada item da lista */
+.servico-item {
+  padding: 10px 15px;
+  background-color: #2e2e2e;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+/* Hover */
+.servico-item:hover {
+  background-color: #3a3a3a;
+  transform: scale(1.02);
+}
+
+/* Quando clicado (ativo) */
+.servico-item.selecionado {
+  background-color: #007bff;
+  color: white;
+}
+
+
+
+
+

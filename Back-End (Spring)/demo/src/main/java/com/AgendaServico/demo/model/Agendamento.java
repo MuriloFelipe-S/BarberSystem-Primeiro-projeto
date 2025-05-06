@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -21,9 +22,13 @@ public class Agendamento {
     @JoinColumn(name = "id_cliente")
     private Cliente cliente;
 
-    @ManyToOne
-    @JoinColumn(name = "id_servico")
-    private Servico servico;
+    @ManyToMany
+    @JoinTable(
+            name = "agendamento_servico",
+            joinColumns = @JoinColumn(name = "agendamento_id"),
+            inverseJoinColumns = @JoinColumn(name = "servico_id")
+    )
+    private List<Servico> servicos;
 
     @ManyToOne
     @JoinColumn(name = "id_barbeiro")
@@ -33,15 +38,13 @@ public class Agendamento {
 
     private Boolean stats;
 
-    public Agendamento() {
-    }
+    public Agendamento() {}
 
-    public Agendamento(Cliente cliente, Servico servico, Barbeiro barbeiro, LocalDateTime dataHora, Boolean stats) {
+    public Agendamento(Cliente cliente, List<Servico> servicos, Barbeiro barbeiro, LocalDateTime dataHora, Boolean stats) {
         this.cliente = cliente;
-        this.servico = servico;
+        this.servicos = servicos;
         this.barbeiro = barbeiro;
         this.dataHora = dataHora;
         this.stats = stats;
     }
-
 }

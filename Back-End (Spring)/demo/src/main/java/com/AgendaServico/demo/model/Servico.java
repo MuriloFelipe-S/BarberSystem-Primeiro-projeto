@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+
+import java.util.List;
 import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,9 +28,9 @@ public class Servico {
     @Column(nullable = false)
     private Double valor;
 
-    @OneToMany(mappedBy = "servico")
+    @ManyToMany(mappedBy = "servicos")
     @JsonIgnore
-    private Set<Agendamento> agendamentos;
+    private List<Agendamento> agendamentos;
 
     public Servico() {
     }

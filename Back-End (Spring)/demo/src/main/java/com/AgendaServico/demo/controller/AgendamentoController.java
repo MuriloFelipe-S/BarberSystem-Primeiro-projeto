@@ -75,4 +75,5 @@ public class AgendamentoController {
         // Chame o serviço responsável por listar os serviços
         return agendamentoService.listarServicos();
     }
+
 }
