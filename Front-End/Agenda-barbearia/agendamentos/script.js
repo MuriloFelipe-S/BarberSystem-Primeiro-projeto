@@ -6,8 +6,17 @@ async function getApiErrorMessage(response) {
   let errorMsg = "Erro ao se comunicar com o servidor.";
   try {
     const errorData = await response.json();
-    errorMsg = errorData.message || errorData.error || JSON.stringify(errorData);
-  } catch {
+    
+    // Tentativa de exibir mensagens de erro mais específicas
+    if (errorData.message) {
+      errorMsg = errorData.message; // Pode ser a mensagem de erro customizada, como "Horário já agendado"
+    } else if (errorData.error) {
+      errorMsg = errorData.error; // Outro campo possível para a mensagem de erro
+    } else {
+      errorMsg = JSON.stringify(errorData); // Em caso de formato desconhecido
+    }
+  } catch (err) {
+    // Se falhar ao parsear como JSON, tenta exibir a resposta em texto
     try {
       errorMsg = await response.text();
       if (!errorMsg) {
@@ -90,7 +99,7 @@ function inicializarAgendamentosPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(agendamento)
       });
-
+    
       if (response.ok) {
         Swal.fire({
           icon: "success",
@@ -102,7 +111,14 @@ function inicializarAgendamentosPage() {
         modal.style.display = "none";
         await carregarAgendamentos();
       } else {
-        throw new Error(await getApiErrorMessage(response));
+        const mensagem = await getApiErrorMessage(response);
+        Swal.fire({
+          icon: "error",
+          title: "Erro ao salvar",
+          text: mensagem,
+          confirmButtonColor: "#dc3545"
+        });
+        return;
       }
     } catch (error) {
       Swal.fire({
@@ -112,6 +128,7 @@ function inicializarAgendamentosPage() {
         confirmButtonColor: "#dc3545"
       });
     }
+    
   });
 
   async function carregarAgendamentos() {

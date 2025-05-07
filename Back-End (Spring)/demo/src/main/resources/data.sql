@@ -16,6 +16,8 @@ CREATE TABLE barbeiro (
     telefone VARCHAR(14) NOT NULL,
     email VARCHAR(100) NOT NULL,
     data_contratacao DATE NOT NULL,
+    inicioExpediente TIME NOT NULL DEFAULT '8:00',
+    fimExpediente TIME NOT NULL DEFAULT '20:00',
     ativo BOOLEAN NOT NULL,
     comissao DECIMAL(5,2)
 );

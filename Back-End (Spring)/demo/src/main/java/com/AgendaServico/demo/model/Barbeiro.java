@@ -6,6 +6,8 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Entity
 @Getter
@@ -26,6 +28,12 @@ public class Barbeiro {
 
     @Column(nullable = false, length = 100)
     private String email;
+
+    @Column(nullable = false)
+    private LocalTime inicioExpediente = LocalTime.of(8, 0);
+
+    @Column(nullable = false)
+    private LocalTime fimExpediente = LocalTime.of(20, 0);
 
     @Column(nullable = false)
     private LocalDate dataContratacao;

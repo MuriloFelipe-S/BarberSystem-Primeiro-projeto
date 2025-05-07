@@ -9,11 +9,15 @@ import com.AgendaServico.demo.model.Cliente;
 import com.AgendaServico.demo.model.Barbeiro;
 import com.AgendaServico.demo.model.Servico;
 import jakarta.persistence.EntityNotFoundException;
+import org.apache.coyote.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -51,6 +55,12 @@ public class AgendamentoService {
 
     public Agendamento criarAgendamento(Agendamento agendamento) {
         try {
+            Barbeiro barbeiroCompleto = buscarBarbeiroCompleto(agendamento.getBarbeiro());
+            agendamento.setBarbeiro(barbeiroCompleto);
+
+            validarHorarioDentroDoExpediente(agendamento);
+            validarDisponibilidade(agendamento);
+
             Agendamento novo = agendamentoRepository.save(agendamento);
             logger.info("Agendamento criado: ID {}", novo.getIdAgendamento());
             return novo;
@@ -63,6 +73,12 @@ public class AgendamentoService {
     public Agendamento atualizarAgendamento(Integer id, Agendamento agendamento) {
         try {
             if (agendamentoRepository.existsById(id)) {
+                Barbeiro barbeiroCompleto = buscarBarbeiroCompleto(agendamento.getBarbeiro());
+                agendamento.setBarbeiro(barbeiroCompleto);
+
+                validarHorarioDentroDoExpediente(agendamento);
+                validarDisponibilidade(agendamento);
+
                 agendamento.setIdAgendamento(id);
                 Agendamento atualizado = agendamentoRepository.save(agendamento);
                 logger.info("Agendamento atualizado: ID {}", id);
@@ -76,6 +92,7 @@ public class AgendamentoService {
             throw e;
         }
     }
+
 
     public void excluirAgendamento(Integer id) {
         try {
@@ -139,4 +156,25 @@ public class AgendamentoService {
             throw e;
         }
     }
+
+    private void validarHorarioDentroDoExpediente(Agendamento agendamento){
+        Barbeiro barbeiro = agendamento.getBarbeiro();
+        LocalTime hora = agendamento.getDataHora().toLocalTime();
+
+        if (hora.isBefore(barbeiro.getInicioExpediente()) || hora.isAfter(barbeiro.getFimExpediente())){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Horário fora de expediente do barbeiro.");
+        }
+    }
+
+    private void validarDisponibilidade(Agendamento agendamento) {
+        if (agendamentoRepository.existsByBarbeiroAndDataHora(
+                agendamento.getBarbeiro(), agendamento.getDataHora())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Este horário já está ocupado para este barbeiro.");
+        }
+    }
+    private Barbeiro buscarBarbeiroCompleto(Barbeiro barbeiroParcial) {
+        return barbeiroRepository.findById(barbeiroParcial.getIdBarbeiro())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Barbeiro não encontrado"));
+    }
+
 }

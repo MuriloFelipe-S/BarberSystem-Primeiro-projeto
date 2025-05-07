@@ -1,52 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-    <title>Document</title>
-</head>
-<body>
-    <div class="container">
-        <h1>Barbeiros</h1>
-        <button id="abrirModal" class="btn">Novo Barbeiro</button>
-      
-        <ul id="lista-barbeiros" class="lista-barbeiros"></ul>
-      </div>
-      
-      <!-- Modal -->
-      <div id="modal" class="modal">
-        <div class="modal-content">
-          <span class="close">&times;</span>
-          <h2 id="modal-title">Novo Barbeiro</h2>
-          <form id="form">
-            <label for="nome">Nome:</label>
-            <input type="text" id="nome" maxlength="100" required>
-      
-            <label for="telefone">Telefone:</label>
-            <input type="text" id="telefone" maxlength="14" required placeholder="(99) 99999-9999">
-      
-            <label for="email">E-mail:</label>
-            <input type="email" id="email" maxlength="100" required>
-      
-            <label for="dataContratacao">Data de Contratação:</label>
-            <input type="date" id="dataContratacao" required>
-      
-            <label for="ativo">Ativo:</label>
-            <select id="ativo" required>
-              <option value="true">Sim</option>
-              <option value="false">Não</option>
-            </select>
-      
-            <label for="comissao">Comissão (%):</label>
-            <input type="number" id="comissao" step="0.01" min="0" placeholder="0.00" required>
-      
-            <button type="submit" class="btn">Salvar</button>
-          </form>
-        </div>
-      </div>
 
-      <script src="script.js"></script>
-      
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <title>Document</title>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Barbeiros</h1>
+    <button id="abrirModal" class="btn">Novo Barbeiro</button>
+
+    <ul id="lista-barbeiros" class="lista-barbeiros"></ul>
+  </div>
+
+  <!-- Modal -->
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2 id="modal-title">Novo Barbeiro</h2>
+      <form id="form">
+        <label for="nome">Nome:</label>
+        <input type="text" id="nome" maxlength="100" required>
+
+        <label for="telefone">Telefone:</label>
+        <input type="text" id="telefone" maxlength="14" required placeholder="(99) 99999-9999">
+
+        <label for="email">E-mail:</label>
+        <input type="email" id="email" maxlength="100" required>
+
+        <label for="expedienteInicio">Expediente:</label>
+        <div style="display: flex; gap: 10px;">
+          <input type="time" id="expedienteInicio" required>
+          <span>-</span>
+          <input type="time" id="expedienteFim" required>
+        </div>
+
+
+        <label for="dataContratacao">Data de Contratação:</label>
+        <input type="date" id="dataContratacao" required>
+
+        <label for="ativo">Ativo:</label>
+        <select id="ativo" required>
+          <option value="true">Sim</option>
+          <option value="false">Não</option>
+        </select>
+
+        <label for="comissao">Comissão (%):</label>
+        <input type="number" id="comissao" step="0.01" min="0" placeholder="0.00" required>
+
+        <button type="submit" class="btn">Salvar</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+
 </body>
+
 </html>
