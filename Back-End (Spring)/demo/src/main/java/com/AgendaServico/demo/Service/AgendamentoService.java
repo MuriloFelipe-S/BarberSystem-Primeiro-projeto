@@ -169,7 +169,12 @@ public class AgendamentoService {
     private void validarDisponibilidade(Agendamento agendamento) {
         if (agendamentoRepository.existsByBarbeiroAndDataHora(
                 agendamento.getBarbeiro(), agendamento.getDataHora())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Este horário já está ocupado para este barbeiro.");
+
+            Barbeiro barbeiro = barbeiroRepository.findById(agendamento.getBarbeiro().getIdBarbeiro())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Barbeiro não encontrado."));
+
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Este horario ja esta ocupado para este barbeiro :"+barbeiro.getNome());
+
         }
     }
     private Barbeiro buscarBarbeiroCompleto(Barbeiro barbeiroParcial) {

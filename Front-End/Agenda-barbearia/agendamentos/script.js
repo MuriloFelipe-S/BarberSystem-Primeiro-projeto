@@ -6,7 +6,7 @@ async function getApiErrorMessage(response) {
   let errorMsg = "Erro ao se comunicar com o servidor.";
   try {
     const errorData = await response.json();
-    
+
     // Tentativa de exibir mensagens de erro mais específicas
     if (errorData.message) {
       errorMsg = errorData.message; // Pode ser a mensagem de erro customizada, como "Horário já agendado"
@@ -20,20 +20,118 @@ async function getApiErrorMessage(response) {
     try {
       errorMsg = await response.text();
       if (!errorMsg) {
-        errorMsg = `Erro ${response.status}: ${response.statusText || "Falha na requisição"}`;
+        errorMsg = `Erro ${response.status}: ${
+          response.statusText || "Falha na requisição"
+        }`;
       }
     } catch {
-      errorMsg = `Erro ${response.status}: ${response.statusText || "Falha na requisição"}`;
+      errorMsg = `Erro ${response.status}: ${
+        response.statusText || "Falha na requisição"
+      }`;
     }
   }
   return errorMsg;
 }
 
+async function handleApiError(response) {
+  const mensagem = await getApiErrorMessage(response);
+  Swal.fire({
+    icon: "error",
+    title: "Erro ao salvar",
+    text: mensagem, // Exibe a mensagem personalizada da API
+    confirmButtonColor: "#dc3545",
+  });
+}
+
+form.addEventListener("submit", async function (event) {
+  event.preventDefault();
+
+  const cliente = document.getElementById("cliente").value;
+  const barbeiro = document.getElementById("barbeiro").value;
+  const servicosSelecionados = document.querySelectorAll(
+    ".servico-item.selecionado"
+  );
+  const dataHora = document.getElementById("dataHora").value;
+  const status = document.getElementById("status").value;
+
+  if (
+    !cliente ||
+    !barbeiro ||
+    servicosSelecionados.length === 0 ||
+    !dataHora ||
+    status === ""
+  ) {
+    Swal.fire({
+      icon: "warning",
+      title: "Campos obrigatórios",
+      text: "Preencha todos os campos corretamente.",
+      confirmButtonColor: "#ffc107",
+    });
+    return;
+  }
+
+  const servicos = Array.from(servicosSelecionados).map((div) => ({
+    idServico: div.dataset.id,
+  }));
+
+  const agendamento = {
+    cliente: { idCliente: cliente },
+    barbeiro: { idBarbeiro: barbeiro },
+    servicos,
+    dataHora: dataHora + ":00",
+    stats: status === "true",
+  };
+
+  const url = editandoId
+    ? `${API_BASE_URL}/agenda/${editandoId}`
+    : `${API_BASE_URL}/agenda`;
+  const metodo = editandoId ? "PUT" : "POST";
+
+  try {
+    const response = await fetch(url, {
+      method: metodo,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(agendamento),
+    });
+
+    if (response.ok) {
+      Swal.fire({
+        icon: "success",
+        title: "Sucesso!",
+        text: `Agendamento ${
+          editandoId ? "atualizado" : "cadastrado"
+        } com sucesso.`,
+        confirmButtonColor: "#007bff",
+      });
+      form.reset();
+      modal.style.display = "none";
+      await carregarAgendamentos();
+    } else {
+      // Aqui chamamos a função de erro modificada
+      await handleApiError(response);
+    }
+  } catch (error) {
+    Swal.fire({
+      icon: "error",
+      title: "Erro",
+      text: error.message,
+      confirmButtonColor: "#dc3545",
+    });
+  }
+});
+
 function escapeHTML(str) {
-  return str.replace(/[&<>"']/g, tag => ({
-    '&': '&amp;', '<': '&lt;', '>': '&gt;',
-    '"': '&quot;', "'": '&#39;'
-  }[tag]));
+  return str.replace(
+    /[&<>"']/g,
+    (tag) =>
+      ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;",
+      }[tag])
+  );
 }
 
 function inicializarAgendamentosPage() {
@@ -57,7 +155,7 @@ function inicializarAgendamentosPage() {
     modal.style.display = "none";
   };
 
-  window.onclick = e => {
+  window.onclick = (e) => {
     if (e.target == modal) modal.style.display = "none";
   };
 
@@ -66,69 +164,90 @@ function inicializarAgendamentosPage() {
 
     const cliente = document.getElementById("cliente").value;
     const barbeiro = document.getElementById("barbeiro").value;
-    const servicosSelecionados = document.querySelectorAll(".servico-item.selecionado");
+    const servicosSelecionados = document.querySelectorAll(
+      ".servico-item.selecionado"
+    );
     const dataHora = document.getElementById("dataHora").value;
     const status = document.getElementById("status").value;
 
-    if (!cliente || !barbeiro || servicosSelecionados.length === 0 || !dataHora || status === "") {
+    if (
+      !cliente ||
+      !barbeiro ||
+      servicosSelecionados.length === 0 ||
+      !dataHora ||
+      status === ""
+    ) {
       Swal.fire({
         icon: "warning",
         title: "Campos obrigatórios",
         text: "Preencha todos os campos corretamente.",
-        confirmButtonColor: "#ffc107"
+        confirmButtonColor: "#ffc107",
       });
       return;
     }
 
-    const servicos = Array.from(servicosSelecionados).map(div => ({ idServico: div.dataset.id }));
+    const servicos = Array.from(servicosSelecionados).map((div) => ({
+      idServico: div.dataset.id,
+    }));
 
     const agendamento = {
       cliente: { idCliente: cliente },
       barbeiro: { idBarbeiro: barbeiro },
       servicos,
       dataHora: dataHora + ":00",
-      stats: status === "true"
+      stats: status === "true",
     };
 
-    const url = editandoId ? `${API_BASE_URL}/agenda/${editandoId}` : `${API_BASE_URL}/agenda`;
+    const url = editandoId
+      ? `${API_BASE_URL}/agenda/${editandoId}`
+      : `${API_BASE_URL}/agenda`;
     const metodo = editandoId ? "PUT" : "POST";
 
     try {
       const response = await fetch(url, {
         method: metodo,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(agendamento)
+        body: JSON.stringify(agendamento),
       });
-    
+
       if (response.ok) {
         Swal.fire({
           icon: "success",
           title: "Sucesso!",
-          text: `Agendamento ${editandoId ? "atualizado" : "cadastrado"} com sucesso.`,
-          confirmButtonColor: "#007bff"
+          text: `Agendamento ${
+            editandoId ? "atualizado" : "cadastrado"
+          } com sucesso.`,
+          confirmButtonColor: "#007bff",
         });
         form.reset();
         modal.style.display = "none";
         await carregarAgendamentos();
+      }
+      if (response.status === 409) {
+        Swal.fire({
+          icon: "error",
+          title: "Horário ocupado",
+          text: "Este horário já está ocupado para este barbeiro.",
+          confirmButtonColor: "#dc3545",
+        });
       } else {
         const mensagem = await getApiErrorMessage(response);
         Swal.fire({
           icon: "error",
           title: "Erro ao salvar",
           text: mensagem,
-          confirmButtonColor: "#dc3545"
+          confirmButtonColor: "#dc3545",
         });
-        return;
       }
+      return;
     } catch (error) {
       Swal.fire({
         icon: "error",
         title: "Erro",
         text: error.message,
-        confirmButtonColor: "#dc3545"
+        confirmButtonColor: "#dc3545",
       });
     }
-    
   });
 
   async function carregarAgendamentos() {
@@ -138,7 +257,7 @@ function inicializarAgendamentosPage() {
       const lista = document.getElementById("lista-agendamentos");
       lista.innerHTML = "";
 
-      agendamentos.forEach(a => {
+      agendamentos.forEach((a) => {
         if (!a.cliente?.nome || !a.servicos?.length) {
           console.warn("Agendamento ignorado (incompleto):", a);
           return;
@@ -148,15 +267,29 @@ function inicializarAgendamentosPage() {
         li.innerHTML = `
           <div class="info">
             <strong>Cliente:</strong> <span>${escapeHTML(a.cliente.nome)}</span>
-            <strong>Telefone:</strong> <span>${escapeHTML(a.cliente.telefone)}</span>
-            <strong>Barbeiro:</strong> <span>${escapeHTML(a.barbeiro.nome)}</span>
-            <strong>Serviços:</strong> <span>${a.servicos.map(s => escapeHTML(s.tipo)).join(", ")}</span>
-            <strong>Data:</strong> <span>${new Date(a.dataHora).toLocaleString()}</span>
-            <strong>Status:</strong> <span>${a.stats ? "Confirmado" : "Pendente"}</span>
+            <strong>Telefone:</strong> <span>${escapeHTML(
+              a.cliente.telefone
+            )}</span>
+            <strong>Barbeiro:</strong> <span>${escapeHTML(
+              a.barbeiro.nome
+            )}</span>
+            <strong>Serviços:</strong> <span>${a.servicos
+              .map((s) => escapeHTML(s.tipo))
+              .join(", ")}</span>
+            <strong>Data:</strong> <span>${new Date(
+              a.dataHora
+            ).toLocaleString()}</span>
+            <strong>Status:</strong> <span>${
+              a.stats ? "Confirmado" : "Pendente"
+            }</span>
           </div>
           <div class="botoes">
-            <button class="editar" onclick='editarAgendamento(${JSON.stringify(a)})'>✎</button>
-            <button class="excluir" onclick='deletarAgendamento(${a.idAgendamento})'>✕</button>
+            <button class="editar" onclick='editarAgendamento(${JSON.stringify(
+              a
+            )})'>✎</button>
+            <button class="excluir" onclick='deletarAgendamento(${
+              a.idAgendamento
+            })'>✕</button>
           </div>
         `;
         lista.appendChild(li);
@@ -171,20 +304,29 @@ function inicializarAgendamentosPage() {
       const [clientesRes, barbeirosRes, servicosRes] = await Promise.all([
         fetch(`${API_BASE_URL}/cliente`),
         fetch(`${API_BASE_URL}/barbeiro`),
-        fetch(`${API_BASE_URL}/servico`)
+        fetch(`${API_BASE_URL}/servico`),
       ]);
 
-      if (!clientesRes.ok) throw new Error(await getApiErrorMessage(clientesRes));
-      if (!barbeirosRes.ok) throw new Error(await getApiErrorMessage(barbeirosRes));
-      if (!servicosRes.ok) throw new Error(await getApiErrorMessage(servicosRes));
+      if (!clientesRes.ok)
+        throw new Error(await getApiErrorMessage(clientesRes));
+      if (!barbeirosRes.ok)
+        throw new Error(await getApiErrorMessage(barbeirosRes));
+      if (!servicosRes.ok)
+        throw new Error(await getApiErrorMessage(servicosRes));
 
       const [clientes, barbeiros, servicos] = await Promise.all([
         clientesRes.json(),
         barbeirosRes.json(),
-        servicosRes.json()
+        servicosRes.json(),
       ]);
 
-      function popularSelect(select, dados, valueField, textField, placeholder) {
+      function popularSelect(
+        select,
+        dados,
+        valueField,
+        textField,
+        placeholder
+      ) {
         select.innerHTML = "";
         const opt = document.createElement("option");
         opt.value = "";
@@ -193,7 +335,7 @@ function inicializarAgendamentosPage() {
         opt.selected = true;
         select.appendChild(opt);
 
-        dados.forEach(item => {
+        dados.forEach((item) => {
           const option = document.createElement("option");
           option.value = item[valueField];
           option.textContent = item[textField];
@@ -201,12 +343,24 @@ function inicializarAgendamentosPage() {
         });
       }
 
-      popularSelect(document.getElementById("cliente"), clientes, "idCliente", "nome", "Selecione um Cliente...");
-      popularSelect(document.getElementById("barbeiro"), barbeiros, "idBarbeiro", "nome", "Selecione um Barbeiro...");
+      popularSelect(
+        document.getElementById("cliente"),
+        clientes,
+        "idCliente",
+        "nome",
+        "Selecione um Cliente..."
+      );
+      popularSelect(
+        document.getElementById("barbeiro"),
+        barbeiros,
+        "idBarbeiro",
+        "nome",
+        "Selecione um Barbeiro..."
+      );
 
       const container = document.getElementById("servicos-container");
       container.innerHTML = "";
-      servicos.forEach(servico => {
+      servicos.forEach((servico) => {
         const div = document.createElement("div");
         div.classList.add("servico-item");
         div.dataset.id = servico.idServico;
@@ -214,7 +368,6 @@ function inicializarAgendamentosPage() {
         div.onclick = () => div.classList.toggle("selecionado");
         container.appendChild(div);
       });
-
     } catch (error) {
       console.error("Erro ao carregar selects:", error);
       Swal.fire("Erro", error.message, "error");
@@ -230,14 +383,20 @@ function inicializarAgendamentosPage() {
       confirmButtonColor: "#dc3545",
       cancelButtonColor: "#6c757d",
       confirmButtonText: "Sim, excluir",
-      cancelButtonText: "Cancelar"
+      cancelButtonText: "Cancelar",
     });
 
     if (confirmacao.isConfirmed) {
       try {
-        const response = await fetch(`${API_BASE_URL}/agenda/${id}`, { method: "DELETE" });
+        const response = await fetch(`${API_BASE_URL}/agenda/${id}`, {
+          method: "DELETE",
+        });
         if (response.ok) {
-          Swal.fire("Excluído!", "Agendamento excluído com sucesso.", "success");
+          Swal.fire(
+            "Excluído!",
+            "Agendamento excluído com sucesso.",
+            "success"
+          );
           await carregarAgendamentos();
         } else {
           throw new Error(await getApiErrorMessage(response));
@@ -254,8 +413,11 @@ function inicializarAgendamentosPage() {
     document.getElementById("dataHora").value = a.dataHora.substring(0, 16);
     document.getElementById("status").value = a.stats ? "true" : "false";
 
-    document.querySelectorAll(".servico-item").forEach(div => {
-      div.classList.toggle("selecionado", a.servicos?.some(s => s.idServico == div.dataset.id));
+    document.querySelectorAll(".servico-item").forEach((div) => {
+      div.classList.toggle(
+        "selecionado",
+        a.servicos?.some((s) => s.idServico == div.dataset.id)
+      );
     });
 
     modalTitle.textContent = "Atualizar Agendamento";

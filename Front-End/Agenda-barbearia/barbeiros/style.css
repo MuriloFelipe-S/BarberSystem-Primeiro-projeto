@@ -139,6 +139,7 @@ h1 {
   color: #dc3545;
 }
 
+/* Modal */
 .modal {
   position: fixed;
   top: 0;
@@ -152,18 +153,53 @@ h1 {
   z-index: 1000;
 }
 
-.modal-content {
-  background: white;
-  padding: 2rem;
-  border-radius: 10px;
-  width: 90%;
-  max-width: 500px;
-  position: relative;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+/* Modal */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  overflow: auto; /* Permite rolagem caso o conteúdo ultrapasse */
 }
 
+/* Modal Content */
+.modal-content {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px; /* Cantos arredondados mais suaves */
+  width: 90%;
+  max-width: 450px; /* Reduzimos a largura máxima */
+  max-height: 80vh; /* Limita a altura para 80% da altura da tela */
+  overflow-y: scroll; /* Permite rolagem vertical quando necessário */
+  position: relative;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); /* Sombra mais suave e intensa */
+}
+
+/* Remover a barra de rolagem visual, mas mantê-la funcional */
+.modal-content::-webkit-scrollbar {
+  width: 0px;
+  height: 0px;
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+  background: transparent;
+}
+
+.modal-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Títulos e campos do formulário */
 .modal-content h2 {
   margin-bottom: 1rem;
+  font-size: 1.25rem; /* Ajusta o tamanho do título */
+  color: #333;
 }
 
 .modal-content form {
@@ -176,24 +212,26 @@ h1 {
 .modal-content select {
   padding: 0.6rem;
   border: 1px solid #ccc;
-  border-radius: 5px;
+  border-radius: 6px;
+  font-size: 1rem; /* Ajusta o tamanho da fonte dos campos */
+  transition: border-color 0.3s ease;
 }
 
+/* Hover nos campos */
+.modal-content input:hover,
+.modal-content select:hover {
+  border-color: var(--primary);
+}
+
+/* Remover o botão de fechar (X) */
 .modal .close {
-  position: absolute;
-  top: 10px;
-  right: 15px;
-  font-size: 1.5rem;
-  color: #aaa;
-  cursor: pointer;
+  display: none; /* Remove o "X" de fechar */
 }
 
-.modal .close:hover {
-  color: #333;
-}
 
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
+
