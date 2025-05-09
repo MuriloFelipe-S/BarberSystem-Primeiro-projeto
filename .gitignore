@@ -1,0 +1,5 @@
+# Ignorar o atalho do Windows
+run - Atalho.lnk
+
+# Ignorar configurações do IntelliJ IDEA
+.idea/

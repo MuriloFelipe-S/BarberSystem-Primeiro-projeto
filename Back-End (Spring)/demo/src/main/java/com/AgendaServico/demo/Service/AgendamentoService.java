@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.orm.hibernate5.support.OpenSessionInterceptor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -70,6 +71,16 @@ public class AgendamentoService {
         }
     }
 
+    public boolean horarioDisponivel(Agendamento agendamento){
+        if (agendamento.getBarbeiro() == null || agendamento.getDataHora() == null){
+            return false;
+        }
+
+        Optional<Agendamento> conflito = agendamentoRepository.findByBarbeiroAndDataHoraAndIdAgendamentoNot(agendamento.getBarbeiro(), agendamento.getDataHora(), agendamento.getIdAgendamento());
+
+        return conflito.isEmpty();
+    }
+
     public Agendamento atualizarAgendamento(Integer id, Agendamento agendamento) {
         try {
             if (agendamentoRepository.existsById(id)) {
@@ -77,9 +88,13 @@ public class AgendamentoService {
                 agendamento.setBarbeiro(barbeiroCompleto);
 
                 validarHorarioDentroDoExpediente(agendamento);
-                validarDisponibilidade(agendamento);
 
                 agendamento.setIdAgendamento(id);
+                if (!horarioDisponivel(agendamento)) {
+                    throw new ResponseStatusException(HttpStatus.CONFLICT,
+                            "Este horário já está ocupado para este barbeiro: " + agendamento.getBarbeiro().getNome());
+                }
+
                 Agendamento atualizado = agendamentoRepository.save(agendamento);
                 logger.info("Agendamento atualizado: ID {}", id);
                 return atualizado;
@@ -92,7 +107,6 @@ public class AgendamentoService {
             throw e;
         }
     }
-
 
     public void excluirAgendamento(Integer id) {
         try {
