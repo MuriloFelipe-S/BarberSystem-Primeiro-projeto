@@ -54,3 +54,7 @@ function carregarPaginaInicial() {
   if (linkInicial) linkInicial.click();
 }
 carregarPaginaInicial();
+
+document.getElementById('open_btn').addEventListener('click', function () {
+    document.getElementById('sidebar').classList.toggle('open-sidebar');
+});

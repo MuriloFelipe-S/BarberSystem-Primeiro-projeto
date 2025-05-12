@@ -1,84 +1,195 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
 
 :root {
-  --bg: #1a1a1a;
-  --bg-card: #2e2e2e;
+  --bg: #e3e9f7;
+  --bg-card: #ffffff;
   --primary: #007bff;
   --primary-dark: #007bff;
   --danger: #ff5252;
-  --text: #f1f1f1;
-  --light-green: #007bff;
+  --text: #0a0a0a;
+  --muted: #6b6b6b;
 }
 
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
 }
 
 body {
-  font-family: "Segoe UI", sans-serif;
-  background: #f4f6f8;
-  color: #333;
-  padding: 2rem;
+  background-color: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
 }
 
-/* Layout principal */
+main {
+  padding: 20px;
+  padding-left: calc(82px + 20px);
+  flex: 1;
+}
+
 .container-geral {
   display: flex;
   height: 100vh;
 }
 
-.menu-lateral {
-  width: 230px;
-  background-color: #20232a;
-  color: white;
-  padding: 20px;
+#sidebar {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: var(--bg-card);
+  height: 100vh;
+  border-radius: 0 18px 18px 0;
+  transition: all 0.5s;
+  min-width: 82px;
+  z-index: 2;
 }
 
-.menu-lateral .logo {
-  font-size: 24px;
-  margin-bottom: 30px;
-  text-align: center;
+#sidebar_content {
+  padding: 12px;
 }
 
-.menu-lateral ul {
+#user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+#user_avatar {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 20px;
+}
+
+#user_infos {
+  display: flex;
+  flex-direction: column;
+}
+
+#user_infos span:last-child {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+#side_items {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
   list-style: none;
 }
-.menu-lateral li {
-  margin-bottom: 15px;
+
+.side-item {
+  border-radius: 8px;
+  padding: 14px;
+  cursor: pointer;
 }
-.menu-lateral a {
-  color: white;
+
+.side-item a {
   text-decoration: none;
-  display: block;
-  padding: 10px;
-  border-radius: 4px;
-  transition: 0.3s;
-}
-.menu-lateral a:hover,
-.menu-lateral a.ativo {
-  background-color: #007bff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text);
 }
 
-.menu-lateral a.ativo {
-  background-color: #007bff;
-  color: white !important;
+.side-item.active {
+  background-color: var(--primary);
 }
 
-h1 {
-  margin-bottom: 1rem;
+.side-item.active a {
+  color: var(--bg);
 }
 
+.side-item:hover:not(.active),
+#logout_btn:hover {
+  background-color: var(--bg);
+}
+
+.side-item a i {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#logout {
+  border-top: 1px solid var(--bg);
+  padding: 12px;
+}
+
+#logout_btn {
+  border: none;
+  padding: 12px;
+  font-size: 14px;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  border-radius: 8px;
+  cursor: pointer;
+  background-color: transparent;
+  text-align: start;
+}
+
+#open_btn {
+  position: absolute;
+  top: 30px;
+  right: -10px;
+  background-color: var(--primary);
+  color: var(--bg);
+  border-radius: 100%;
+  width: 20px;
+  height: 20px;
+  border: none;
+  cursor: pointer;
+}
+
+#open_btn_icon {
+  transition: transform 0.3s ease;
+}
+
+.open-sidebar #open_btn_icon {
+  transform: rotate(180deg);
+}
+
+.item-description {
+  width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 14px;
+  transition: width 0.6s;
+  height: 0;
+}
+
+#sidebar.open-sidebar {
+  min-width: 15%;
+}
+
+#sidebar.open-sidebar .item-description {
+  width: 150px;
+  height: auto;
+}
+
+#sidebar.open-sidebar .side-item a {
+  justify-content: flex-start;
+  gap: 14px;
+}
+
+/* Botões padrão */
 .btn {
   padding: 0.6rem 1.2rem;
   background-color: var(--primary);
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
   transition: background 0.3s;
-  font-weight: bold;
+  font-weight: 600;
 }
 
 .btn:hover {
