@@ -8,7 +8,7 @@ function inicializarBarbeirosPage() {
   const lista = document.getElementById("lista-barbeiros");
   let editandoId = null;
 
-  // Abre o modal para novo barbeiro
+  // Abrir o modal para criar um novo barbeiro
   abrirModal.onclick = () => {
     form.reset();
     editandoId = null;
@@ -17,13 +17,13 @@ function inicializarBarbeirosPage() {
     modal.style.display = "flex";
   };
 
-  // Fecha modal
+  // Fechar o modal
   fecharModal.onclick = () => (modal.style.display = "none");
   window.onclick = (e) => {
     if (e.target === modal) modal.style.display = "none";
   };
 
-  // Envia formulário
+  // Submeter o formulário para criar ou editar o barbeiro
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
 
@@ -38,7 +38,7 @@ function inicializarBarbeirosPage() {
       fimExpediente: document.getElementById("expedienteFim").value,
     };
 
-    // Validação básica
+    // Verificar se todos os campos obrigatórios estão preenchidos
     if (
       Object.values(barbeiro).some(
         (v) => v === "" || v === null || (typeof v === "number" && isNaN(v))
@@ -65,30 +65,36 @@ function inicializarBarbeirosPage() {
         body: JSON.stringify(barbeiro),
       });
 
+      // Verificar se a resposta foi bem-sucedida
       if (response.ok) {
         Swal.fire({
           icon: "success",
           title: "Sucesso!",
-          text: `Barbeiro ${
-            editandoId ? "atualizado" : "cadastrado"
-          } com sucesso.`,
+          text: `Barbeiro ${editandoId ? "atualizado" : "cadastrado"
+            } com sucesso.`,
           confirmButtonColor: "#007bff",
         });
         form.reset();
         modal.style.display = "none";
         carregarBarbeiros();
-      } else throw new Error();
+      } else {
+        // Caso o servidor retorne um erro
+        const errorData = await response.json(); // Supondo que o servidor retorna um JSON
+        throw new Error(errorData.message || 'Erro desconhecido');
+      }
     } catch (error) {
+      // Exibir o erro retornado pelo servidor
       Swal.fire({
         icon: "error",
         title: "Erro",
-        text: "Erro na comunicação com o servidor.",
+        text: error.message || "Erro na comunicação com o servidor.",
         confirmButtonColor: "#dc3545",
       });
     }
   });
 
-  // Carrega lista de barbeiros
+
+  // Função para carregar a lista de barbeiros
   async function carregarBarbeiros() {
     try {
       const resposta = await fetch("http://localhost:8080/barbeiro");
@@ -96,11 +102,16 @@ function inicializarBarbeirosPage() {
       lista.innerHTML = "";
       barbeiros.forEach(criarElementoBarbeiro);
     } catch (error) {
-      console.error("Erro ao carregar barbeiros:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Erro",
+        text: "Não foi possível carregar a lista de barbeiros.",
+        confirmButtonColor: "#dc3545",
+      });
     }
   }
 
-  // Cria o elemento visual de cada barbeiro
+  // Função para criar o elemento de barbeiro na lista
   function criarElementoBarbeiro(b) {
     const li = document.createElement("li");
     li.innerHTML = `
@@ -109,28 +120,19 @@ function inicializarBarbeirosPage() {
         <strong>Telefone:</strong> <span>${b.telefone}</span>
         <strong>Email:</strong> <span>${b.email}</span>
         <strong>Contratação:</strong> <span>${b.dataContratacao}</span>
-        <strong>Expediente:</strong> <span>${b.inicioExpediente?.substring(
-          0,
-          5
-        )} - ${b.fimExpediente?.substring(0, 5)}</span>
+        <strong>Expediente:</strong> <span>${b.inicioExpediente?.substring(0, 5)} - ${b.fimExpediente?.substring(0, 5)}</span>
         <strong>Ativo:</strong> <span>${b.ativo ? "Sim" : "Não"}</span>
         <strong>Comissão:</strong> <span>${b.comissao?.toFixed(2)}%</span>
       </div>
       <div class="botoes">
-        <button class="editar" onclick="editarBarbeiro(${b.idBarbeiro}, '${
-      b.nome
-    }', '${b.telefone}', '${b.email}', '${b.dataContratacao}', ${b.ativo}, ${
-      b.comissao
-    }, '${b.inicioExpediente}', '${b.fimExpediente}')">✎</button>
-        <button class="excluir" onclick="deletarBarbeiro(${
-          b.idBarbeiro
-        })">✕</button>
+        <button class="editar" onclick="editarBarbeiro(${b.idBarbeiro}, '${b.nome}', '${b.telefone}', '${b.email}', '${b.dataContratacao}', ${b.ativo}, ${b.comissao}, '${b.inicioExpediente}', '${b.fimExpediente}')">✎</button>
+        <button class="excluir" onclick="deletarBarbeiro(${b.idBarbeiro})">✕</button>
       </div>
     `;
     lista.appendChild(li);
   }
 
-  // Função para deletar barbeiro
+  // Função para deletar o barbeiro
   async function deletarBarbeiro(id) {
     const confirmacao = await Swal.fire({
       title: "Tem certeza?",
@@ -158,7 +160,7 @@ function inicializarBarbeirosPage() {
     }
   }
 
-  // Função para editar barbeiro
+  // Função para editar o barbeiro
   function editarBarbeiro(
     id,
     nome,
@@ -176,10 +178,8 @@ function inicializarBarbeirosPage() {
     document.getElementById("dataContratacao").value = dataContratacao;
     document.getElementById("ativo").value = ativo;
     document.getElementById("comissao").value = comissao;
-    document.getElementById("expedienteInicio").value =
-      inicioExpediente?.substring(0, 5) || "";
-    document.getElementById("expedienteFim").value =
-      fimExpediente?.substring(0, 5) || "";
+    document.getElementById("expedienteInicio").value = inicioExpediente?.substring(0, 5) || "";
+    document.getElementById("expedienteFim").value = fimExpediente?.substring(0, 5) || "";
 
     modalTitle.textContent = "Atualizar Barbeiro";
     formButton.textContent = "Atualizar";
@@ -187,11 +187,9 @@ function inicializarBarbeirosPage() {
     modal.style.display = "flex";
   }
 
-  // Expondo globalmente para funcionar nos botões
   window.editarBarbeiro = editarBarbeiro;
   window.deletarBarbeiro = deletarBarbeiro;
 
-  // Inicializa a lista ao carregar a página
   carregarBarbeiros();
 }
 

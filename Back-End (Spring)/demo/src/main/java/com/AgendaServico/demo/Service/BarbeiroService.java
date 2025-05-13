@@ -8,6 +8,7 @@ import com.AgendaServico.demo.model.Cliente;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -30,18 +31,29 @@ public class BarbeiroService {
     }
 
     public Barbeiro criarBarbeiro(Barbeiro barbeiro) {
-        if (barbeiro.getDataContratacao().isBefore(LocalDate.now())){
-            throw new IllegalArgumentException("Nao e permitido registrar contratacao no passado");
-        }
-        if (barbeiroRepository.existsByemail(barbeiro.getEmail())) {
-            throw new IllegalArgumentException("Já existe um barbeiro com este e-mail.");
-        }
-
-        if (barbeiroRepository.existsBytelefone(barbeiro.getTelefone())) {
-            throw new IllegalArgumentException("Já existe um barbeiro com este telefone.");
-        }
+        validarDataContratacao(barbeiro.getDataContratacao());
+        validarEmail(barbeiro.getEmail());
+        validarTelefone(barbeiro.getTelefone());
 
         return barbeiroRepository.save(barbeiro);
+    }
+
+    private void validarDataContratacao(LocalDate dataContratacao) {
+        if (dataContratacao.isBefore(LocalDate.now())) {
+            throw new IllegalArgumentException("Nao e permitido registrar contratação no passado");
+        }
+    }
+
+    private void validarEmail(String email) {
+        if (barbeiroRepository.existsByemail(email)) {
+            throw new IllegalArgumentException("Ja existe um barbeiro com este e-mail.");
+        }
+    }
+
+    private void validarTelefone(String telefone) {
+        if (barbeiroRepository.existsBytelefone(telefone)) {
+            throw new IllegalArgumentException("Ja existe um barbeiro com este telefone.");
+        }
     }
 
     public Barbeiro atualizarBarbeiro(Integer id, Barbeiro barbeiro) {
