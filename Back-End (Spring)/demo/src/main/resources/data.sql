@@ -13,8 +13,8 @@ CREATE TABLE servico (
 CREATE TABLE barbeiro (
     id_barbeiro INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
-    telefone VARCHAR(14) NOT NULL,
-    email VARCHAR(100) NOT NULL,
+    telefone VARCHAR(14) UNIQUE NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
     data_contratacao DATE NOT NULL,
     inicioExpediente TIME NOT NULL DEFAULT '8:00',
     fimExpediente TIME NOT NULL DEFAULT '20:00',

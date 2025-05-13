@@ -10,6 +10,7 @@
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="style.css" />
     <title>BarberSys - Sistema de Gestão</title>
   </head>
@@ -19,8 +20,8 @@
         <div id="user">
           <img src="icon/userIcon.png" id="user_avatar" alt="Avatar" />
           <p id="user_infos">
-            <span class="item-description"> Fulano de Tal </span>
-            <span class="item-description"> Lorem Ipsum </span>
+            <span class="item-description"> USER </span>
+            <span class="item-description"> admin </span>
           </p>
         </div>
 
@@ -52,6 +53,13 @@
               <span class="item-description"> Barbeiros </span>
             </a>
           </li>
+
+          <li class="side-item">
+            <a href="#" data-page="configuracoes">
+              <i class="fa-solid fa-gear"></i>
+              <span class="item-description"> Configurações </span>
+            </a>
+          </li>
         </ul>
 
         <button id="open_btn">
@@ -73,8 +81,6 @@
       </div>
     </main>
 
-
     <script src="script.js"></script>
-
-</body>
+  </body>
 </html>

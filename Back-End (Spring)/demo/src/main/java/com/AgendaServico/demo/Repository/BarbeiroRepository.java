@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface BarbeiroRepository extends JpaRepository<Barbeiro, Integer> {
 
-    // extends JpaRepository<...> --> Importa os métodos prontos do CRUD
-    // <Barbeiro, Integer> --> entidade que sera gerenciada e tipo de chave primaria
+    boolean existsByemail(String email);
+    boolean existsBytelefone(String telefone);
 
 }

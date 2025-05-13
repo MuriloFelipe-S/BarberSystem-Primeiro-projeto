@@ -9,6 +9,9 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,6 +30,17 @@ public class BarbeiroService {
     }
 
     public Barbeiro criarBarbeiro(Barbeiro barbeiro) {
+        if (barbeiro.getDataContratacao().isBefore(LocalDate.now())){
+            throw new IllegalArgumentException("Nao e permitido registrar contratacao no passado");
+        }
+        if (barbeiroRepository.existsByemail(barbeiro.getEmail())) {
+            throw new IllegalArgumentException("Já existe um barbeiro com este e-mail.");
+        }
+
+        if (barbeiroRepository.existsBytelefone(barbeiro.getTelefone())) {
+            throw new IllegalArgumentException("Já existe um barbeiro com este telefone.");
+        }
+
         return barbeiroRepository.save(barbeiro);
     }
 

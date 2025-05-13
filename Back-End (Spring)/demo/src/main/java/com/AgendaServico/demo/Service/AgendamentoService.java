@@ -18,6 +18,7 @@ import org.springframework.orm.hibernate5.support.OpenSessionInterceptor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
@@ -55,9 +56,13 @@ public class AgendamentoService {
     }
 
     public Agendamento criarAgendamento(Agendamento agendamento) {
+        if (agendamento.getDataHora().isBefore(LocalDateTime.now())){
+            throw new IllegalArgumentException("Nao é permitido agendar para uma data ou hora no passado");
+        }
         try {
             Barbeiro barbeiroCompleto = buscarBarbeiroCompleto(agendamento.getBarbeiro());
             agendamento.setBarbeiro(barbeiroCompleto);
+
 
             validarHorarioDentroDoExpediente(agendamento);
             validarDisponibilidade(agendamento);
@@ -69,6 +74,8 @@ public class AgendamentoService {
             logger.error("Erro ao criar agendamento", e);
             throw e;
         }
+
+
     }
 
     public boolean horarioDisponivel(Agendamento agendamento){
@@ -92,7 +99,7 @@ public class AgendamentoService {
                 agendamento.setIdAgendamento(id);
                 if (!horarioDisponivel(agendamento)) {
                     throw new ResponseStatusException(HttpStatus.CONFLICT,
-                            "Este horário já está ocupado para este barbeiro: " + agendamento.getBarbeiro().getNome());
+                            "Este horario ja esta ocupado para este barbeiro: " + agendamento.getBarbeiro().getNome());
                 }
 
                 Agendamento atualizado = agendamentoRepository.save(agendamento);
