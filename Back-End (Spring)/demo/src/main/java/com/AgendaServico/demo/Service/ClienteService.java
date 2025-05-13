@@ -25,7 +25,20 @@ public class ClienteService {
     }
 
     public Cliente criarCliente(Cliente cliente) {
+
+        validarTelefone(cliente.getTelefone());
         return clienteRepository.save(cliente);
+
+    }
+
+    private void validarTelefone(String telefone) {
+
+        if (clienteRepository.existsBytelefone(telefone)) {
+
+            throw new IllegalArgumentException("Ja existe um barbeiro com este telefone.");
+
+        }
+
     }
 
     public Cliente atualizarCliente(Integer id, Cliente cliente) {

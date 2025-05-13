@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 @Repository // Anotacao informa para o Spring que essa classe acessa o banco
 public interface ClienteRepository extends JpaRepository<Cliente, Integer>{
 
+    boolean existsBytelefone(String telefone);
     // extends JpaRepository<...> --> Importa os métodos prontos do CRUD
     // <Cliente, Integer> --> entidade que sera gerenciada e tipo de chave primaria (id)
 

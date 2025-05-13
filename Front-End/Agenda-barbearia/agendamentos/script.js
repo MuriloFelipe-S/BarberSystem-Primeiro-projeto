@@ -18,14 +18,12 @@ async function getApiErrorMessage(response) {
     try {
       errorMsg = await response.text();
       if (!errorMsg) {
-        errorMsg = `Erro ${response.status}: ${
-          response.statusText || "Falha na requisição"
-        }`;
+        errorMsg = `Erro ${response.status}: ${response.statusText || "Falha na requisição"
+          }`;
       }
     } catch {
-      errorMsg = `Erro ${response.status}: ${
-        response.statusText || "Falha na requisição"
-      }`;
+      errorMsg = `Erro ${response.status}: ${response.statusText || "Falha na requisição"
+        }`;
     }
   }
   return errorMsg;
@@ -45,13 +43,13 @@ function escapeHTML(str) {
   return str.replace(
     /[&<>"']/g,
     (tag) =>
-      ({
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#39;",
-      }[tag])
+    ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;",
+    }[tag])
   );
 }
 
@@ -132,16 +130,10 @@ async function inicializarAgendamentosPage() {
         modal.style.display = "none";
         await carregarAgendamentos();
       } else {
-        if (response.status === 409) {
-          Swal.fire({
-            icon: "error",
-            title: "Horário ocupado",
-            text: "Este horário já está ocupado para este barbeiro.",
-            confirmButtonColor: "#dc3545",
-          });
-        } else {
-          await handleApiError(response);
-        }
+        // Caso o servidor retorne um erro, tenta extrair a mensagem de erro
+        const errorData = await response.json();
+        // Exibe um erro apropriado
+        Swal.fire("Erro!", errorData.message || "Erro desconhecido", "error");
       }
     } catch (error) {
       Swal.fire({
@@ -173,8 +165,8 @@ async function inicializarAgendamentosPage() {
             <strong>Telefone:</strong> <span>${escapeHTML(a.cliente.telefone)}</span>
             <strong>Barbeiro:</strong> <span>${escapeHTML(a.barbeiro.nome)}</span>
             <strong>Serviços:</strong> <span>${a.servicos
-              .map((s) => escapeHTML(s.tipo))
-              .join(", ")}</span>
+            .map((s) => escapeHTML(s.tipo))
+            .join(", ")}</span>
             <strong>Data:</strong> <span>${new Date(
               a.dataHora
             ).toLocaleString()}</span>

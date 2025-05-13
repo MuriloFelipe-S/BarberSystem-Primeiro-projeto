@@ -31,7 +31,7 @@ function inicializarServicoPage() {
     if (e.target == modal) modal.style.display = 'none';
   };
 
-  form.addEventListener('submit', async function(event) {
+  form.addEventListener('submit', async function (event) {
     event.preventDefault();
 
     const tipo = document.getElementById('tipo').value.trim();
@@ -70,7 +70,10 @@ function inicializarServicoPage() {
         modal.style.display = 'none';
         carregarServicos();
       } else {
-        throw new Error();
+        // Caso o servidor retorne um erro, tenta extrair a mensagem de erro
+        const errorData = await response.json();
+        // Exibe um erro apropriado
+        Swal.fire("Erro!", errorData.message || "Erro desconhecido", "error");
       }
     } catch (error) {
       Swal.fire({
@@ -82,33 +85,33 @@ function inicializarServicoPage() {
     }
   });
 
-// Carregar serviços
-async function carregarServicos() {
-  try {
-    const resposta = await fetch('http://localhost:8080/servico');
-
-    // Verifica se a resposta é válida
-    if (!resposta.ok) {
-      throw new Error(`Erro na requisição: ${resposta.status} - ${resposta.statusText}`);
-    }
-
-    const textoResposta = await resposta.text(); // Obtém a resposta como texto
-    let servicos;
-
+  // Carregar serviços
+  async function carregarServicos() {
     try {
-      servicos = JSON.parse(textoResposta); // Tenta converter para JSON
-    } catch (jsonError) {
-      console.error('Erro ao converter resposta para JSON:', textoResposta);
-      throw new Error('A resposta do servidor não é um JSON válido.');
-    }
+      const resposta = await fetch('http://localhost:8080/servico');
 
-    const lista = document.getElementById('lista-servicos');
-    lista.innerHTML = '';
+      // Verifica se a resposta é válida
+      if (!resposta.ok) {
+        throw new Error(`Erro na requisição: ${resposta.status} - ${resposta.statusText}`);
+      }
 
-    servicos.forEach(s => {
-      const li = document.createElement('li');
+      const textoResposta = await resposta.text(); // Obtém a resposta como texto
+      let servicos;
 
-      li.innerHTML = `
+      try {
+        servicos = JSON.parse(textoResposta); // Tenta converter para JSON
+      } catch (jsonError) {
+        console.error('Erro ao converter resposta para JSON:', textoResposta);
+        throw new Error('A resposta do servidor não é um JSON válido.');
+      }
+
+      const lista = document.getElementById('lista-servicos');
+      lista.innerHTML = '';
+
+      servicos.forEach(s => {
+        const li = document.createElement('li');
+
+        li.innerHTML = `
         <div class="info">
           <div class="icon">💈</div>
           <h3>${s.tipo}</h3>
@@ -120,18 +123,18 @@ async function carregarServicos() {
         </div>
       `;
 
-      lista.appendChild(li);
-    });
-  } catch (error) {
-    console.error('Erro ao carregar serviços:', error);
-    Swal.fire({
-      icon: 'error',
-      title: 'Erro',
-      text: 'Não foi possível carregar os serviços. Verifique o console para mais detalhes.',
-      confirmButtonColor: '#dc3545'
-    });
+        lista.appendChild(li);
+      });
+    } catch (error) {
+      console.error('Erro ao carregar serviços:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Erro',
+        text: 'Não foi possível carregar os serviços. Verifique o console para mais detalhes.',
+        confirmButtonColor: '#dc3545'
+      });
+    }
   }
-}
 
   async function deletarServico(id) {
     Swal.fire({
