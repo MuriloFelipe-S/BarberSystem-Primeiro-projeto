@@ -147,18 +147,29 @@ function inicializarBarbeirosPage() {
 
     if (confirmacao.isConfirmed) {
       try {
+        // Envia a requisição DELETE para excluir o barbeiro
         const response = await fetch(`http://localhost:8080/barbeiro/${id}`, {
           method: "DELETE",
         });
+
+        // Verifica se a resposta é OK (status 200-299)
         if (response.ok) {
+          // Se a exclusão for bem-sucedida
           Swal.fire("Excluído!", "Barbeiro excluído com sucesso.", "success");
-          carregarBarbeiros();
-        } else throw new Error();
+          carregarBarbeiros(); // Recarrega a lista de barbeiros
+        } else {
+          // Caso o servidor retorne um erro, tenta extrair a mensagem de erro
+          const errorData = await response.json();
+          // Exibe um erro apropriado
+          Swal.fire("Erro!", errorData.message || "Erro desconhecido", "error");
+        }
       } catch (error) {
+        // Caso haja problemas de comunicação com o servidor
         Swal.fire("Erro!", "Erro ao se comunicar com o servidor.", "error");
       }
     }
   }
+
 
   // Função para editar o barbeiro
   function editarBarbeiro(

@@ -12,6 +12,7 @@ import java.util.Optional;
 public interface AgendamentoRepository extends JpaRepository<Agendamento, Integer> {
 
     boolean existsByBarbeiroAndDataHora(Barbeiro barbeiro, java.time.LocalDateTime dataHora);
+    boolean existsByBarbeiro_IdBarbeiro(Integer idBarbeiro);
 
     Optional<Agendamento> findByBarbeiroAndDataHoraAndIdAgendamentoNot(Barbeiro barbeiro, LocalDateTime dataHora, Integer idAgendamento);
 

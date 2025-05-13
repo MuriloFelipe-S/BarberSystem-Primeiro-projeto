@@ -1,6 +1,7 @@
 package com.AgendaServico.demo.Service;
 
 
+import com.AgendaServico.demo.Repository.AgendamentoRepository;
 import com.AgendaServico.demo.Repository.BarbeiroRepository;
 import com.AgendaServico.demo.Repository.ClienteRepository;
 import com.AgendaServico.demo.model.Barbeiro;
@@ -20,10 +21,12 @@ import java.util.Optional;
 public class BarbeiroService {
 
     private final BarbeiroRepository barbeiroRepository;
+    private final AgendamentoRepository agendamentoRepository;
 
     @Autowired
-    public BarbeiroService(BarbeiroRepository barbeiroRepository) {
+    public BarbeiroService(BarbeiroRepository barbeiroRepository, AgendamentoRepository agendamentoRepository) {
         this.barbeiroRepository = barbeiroRepository;
+        this.agendamentoRepository = agendamentoRepository;
     }
 
     public List<Barbeiro> listarTodos() {
@@ -66,12 +69,18 @@ public class BarbeiroService {
     }
 
     public void excluirBarbeiro(Integer id) {
-        if (barbeiroRepository.existsById(id)) {
+
+        if (!barbeiroRepository.existsById(id)) {
+            throw new IllegalArgumentException("Barbeiro não encontrado.");
+        }
+
+        else if (agendamentoRepository.existsByBarbeiro_IdBarbeiro(id)) {
+            throw new IllegalArgumentException("Não é possível deletar o barbeiro pois ele possui agendamentos vinculados.");
+        }
+
+        else {
             barbeiroRepository.deleteById(id);
-        } else {
-            throw new EntityNotFoundException("Barbeiro não encontrado");
         }
     }
-
 
 }
