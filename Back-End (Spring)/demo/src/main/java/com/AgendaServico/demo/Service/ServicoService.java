@@ -22,8 +22,17 @@ public class ServicoService {
         return servicoRepository.findAll();
     }
 
+    public void validarTipo(String tipo){
+        if (servicoRepository.existsByTipo(tipo)){
+            throw new IllegalArgumentException("esse serviço já criado");
+        }
+    }
+
     public Servico criarServico(Servico servico) {
+
+        validarTipo(servico.getTipo());
         return servicoRepository.save(servico);
+
     }
 
     public Servico atualizarServico(Integer id, Servico servico) {

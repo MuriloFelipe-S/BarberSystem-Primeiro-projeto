@@ -35,7 +35,7 @@ public class ClienteService {
 
         if (clienteRepository.existsBytelefone(telefone)) {
 
-            throw new IllegalArgumentException("Ja existe um barbeiro com este telefone.");
+            throw new IllegalArgumentException("Ja existe um cliente com este telefone.");
 
         }
 
