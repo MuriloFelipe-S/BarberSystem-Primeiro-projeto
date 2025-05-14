@@ -7,8 +7,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ServicoRepository extends JpaRepository<Servico, Integer> {
-
-    // extends JpaRepository<...> --> Importa os métodos prontos do CRUD
-    // <Servico, Integer> --> entidade que sera gerenciada e tipo de chave primaria (id)
+    boolean existsByTipo(String tipo);
 
 }
