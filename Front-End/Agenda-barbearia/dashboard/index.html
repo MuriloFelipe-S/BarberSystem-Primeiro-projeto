@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css"> <!-- Vamos criar o CSS -->
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Gestão da Barbearia</h1>
+        </header>
+        
+        <main>
+            <div class="card-container">
+                <div class="card">
+                    <h3>Quantidade de Agendamentos</h3>
+                    <p id="agendamentos-count">0</p>
+                </div>
+                <div class="card">
+                    <h3>Faturamento Total Mensal</h3>
+                    <p id="faturamento-total">R$ 0,00</p>
+                </div>
+            </div>
+            <div id="grafico-container">
+                <!-- Aqui podemos colocar um gráfico com os dados -->
+                <canvas id="grafico"></canvas>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Para gráficos -->
+    <script src="script.js"></script> <!-- Vamos criar o JS -->
+</body>
+</html>
