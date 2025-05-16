@@ -1,106 +1,60 @@
-// script.js atualizado com roteamento por hash e carregamento robusto
+// script.js atualizado com correções para garantir que scripts de páginas dinâmicas sejam carregados corretamente após substituição do conteúdo
 const conteudo = document.getElementById('conteudo-dinamico');
 const links = document.querySelectorAll('[data-page]');
 
 function carregarPagina(pagina) {
-  // Atualiza o hash na URL
-  window.location.hash = pagina || 'servico';
-
-  // Limpa conteúdo anterior e remove recursos antigos
-  conteudo.innerHTML = '';
-  document.querySelectorAll('link[data-dinamico], script[data-dinamico]').forEach(el => el.remove());
-
-  // Ativa item do menu
-  document.querySelectorAll('.side-item a').forEach(a => a.classList.remove('ativo'));
+  document.querySelectorAll('.menu-lateral a').forEach(a => a.classList.remove('ativo'));
   const linkAtivo = document.querySelector(`[data-page="${pagina}"]`);
   if (linkAtivo) linkAtivo.classList.add('ativo');
 
-  // Carrega HTML (usando caminho absoluto)
-  fetch(`/${pagina}/index.html`)
-    .then(res => {
-      if (!res.ok) throw new Error(`Erro ${res.status} ao carregar ${pagina}`);
-      return res.text();
-    })
+  fetch(`../${pagina}/index.html`)
+    .then(res => res.text())
     .then(html => {
       conteudo.innerHTML = html;
 
-      // Carrega CSS
-      return new Promise((resolve) => {
-        const estilo = document.createElement('link');
-        estilo.rel = 'stylesheet';
-        estilo.href = `/${pagina}/style.css`;
-        estilo.setAttribute('data-dinamico', 'true');
-        estilo.onload = () => {
-          console.log(`CSS de ${pagina} carregado`);
-          resolve();
-        };
-        estilo.onerror = (e) => {
-          console.warn(`Erro ao carregar CSS de ${pagina}:`, e);
-          resolve();
-        };
-        document.head.appendChild(estilo);
-      });
-    })
-    .then(() => {
-      // Carrega JS após o conteúdo estar pronto
-      return new Promise((resolve) => {
+      // Remove CSS antigo
+      document.querySelectorAll('link[data-dinamico]').forEach(e => e.remove());
+
+      const estilo = document.createElement('link');
+      estilo.rel = 'stylesheet';
+      estilo.href = `../${pagina}/style.css`;
+      estilo.setAttribute('data-dinamico', 'true');
+      document.head.appendChild(estilo);
+
+      // Remove scripts antigos
+      document.querySelectorAll('script[data-dinamico]').forEach(s => s.remove());
+
+      // Aguarda o DOM ser montado para garantir que o script pegue os elementos corretos
+      setTimeout(() => {
         const script = document.createElement('script');
-        script.src = `/${pagina}/script.js`;
+        script.src = `../${pagina}/script.js`;
+        script.type = 'text/javascript';
         script.setAttribute('data-dinamico', 'true');
-        script.defer = true;
-        
-        script.onload = () => {
-          console.log(`${pagina} script carregado com sucesso`);
-          resolve();
-        };
-        
-        script.onerror = (err) => {
-          console.error(`Erro ao carregar script de ${pagina}:`, err);
-          resolve();
-        };
-        
-        document.head.appendChild(script);
-      });
+        script.onload = () => console.log(`${pagina} script carregado com sucesso.`);
+        script.onerror = err => console.error(`Erro ao carregar o script de ${pagina}:`, err);
+        document.body.appendChild(script);
+      }, 50);
     })
     .catch(err => {
-      console.error(`Erro ao carregar ${pagina}:`, err);
-      conteudo.innerHTML = `
-        <div class="error-message">
-          <h2>Erro ao carregar a página</h2>
-          <p>${err.message}</p>
-          <button onclick="location.reload()">Recarregar</button>
-        </div>
-      `;
+      conteudo.innerHTML = '<p>Erro ao carregar página.</p>';
+      console.error(err);
     });
 }
 
-// Ouvinte para links do menu
 links.forEach(link => {
   link.addEventListener('click', (e) => {
     e.preventDefault();
-    carregarPagina(link.dataset.page);
+    const pagina = link.dataset.page;
+    carregarPagina(pagina);
   });
 });
 
-// Ouvinte para mudanças de hash
-window.addEventListener('hashchange', () => {
-  const pagina = window.location.hash.substring(1);
-  if (pagina) carregarPagina(pagina);
-});
-
-// Carrega a página inicial baseada no hash ou padrão
 function carregarPaginaInicial() {
-  const pagina = window.location.hash.substring(1) || 'servico';
-  carregarPagina(pagina);
+  const linkInicial = document.querySelector('[data-page="servico"]');
+  if (linkInicial) linkInicial.click();
 }
+carregarPaginaInicial();
 
-// Inicialização quando o DOM estiver pronto
-document.addEventListener('DOMContentLoaded', carregarPaginaInicial);
-
-// Botão sidebar
-document.getElementById('open_btn').addEventListener('click', function() {
-  document.getElementById('sidebar').classList.toggle('open-sidebar');
+document.getElementById('open_btn').addEventListener('click', function () {
+    document.getElementById('sidebar').classList.toggle('open-sidebar');
 });
-
-// Força rolagem para o topo ao carregar nova página
-window.addEventListener('load', () => window.scrollTo(0, 0));

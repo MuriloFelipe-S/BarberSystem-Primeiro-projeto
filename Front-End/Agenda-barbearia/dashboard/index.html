@@ -1,36 +1,82 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="style.css"> <!-- Vamos criar o CSS -->
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard | Barbearia</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
     <div class="container">
-        <header>
-            <h1>Gestão da Barbearia</h1>
-        </header>
-        
-        <main>
-            <div class="card-container">
-                <div class="card">
-                    <h3>Quantidade de Agendamentos</h3>
-                    <p id="agendamentos-count">0</p>
-                </div>
-                <div class="card">
-                    <h3>Faturamento Total Mensal</h3>
-                    <p id="faturamento-total">R$ 0,00</p>
-                </div>
-            </div>
-            <div id="grafico-container">
-                <!-- Aqui podemos colocar um gráfico com os dados -->
-                <canvas id="grafico"></canvas>
-            </div>
-        </main>
+      <header>
+        <h1>Gestão da Barbearia</h1>
+      </header>
+
+      <main>
+        <!-- Cards principais -->
+        <div class="card-container">
+          <div class="card">
+            <h3>Agendados Totais</h3>
+            <p id="agendamentos-count">0</p>
+          </div>
+          <div class="card">
+            <h3>Faturamento Mensal</h3>
+            <p id="faturamento-total">R$ 0,00</p>
+          </div>
+          <div class="card">
+            <h3>Clientes Atendidos</h3>
+            <p id="clientes-count">0</p>
+          </div>
+          <div class="card">
+            <h3>Agendamentos do dia</h3>
+            <p id="agendamentos-hoje">0</p>
+          </div>
+          <div class="card">
+            <h3>Faturamento do dia</h3>
+            <p id="faturamento-hoje">R$ 0,00</p>
+          </div>
+        </div>
+
+        <!-- Gráfico de pizza -->
+        <div class="grafico-wrapper full-width">
+          <h2>Distribuição de Serviços</h2>
+          <canvas id="grafico"></canvas>
+        </div>
+
+        <!-- Gráficos lado a lado -->
+        <div class="graficos-duplos">
+          <!-- Gráfico de barras -->
+          <div class="grafico-wrapper">
+            <h2>Receita por Dia da Semana</h2>
+            <canvas id="grafico-receita-dia" height="100"></canvas>
+          </div>
+
+          <!-- Gráfico de linha com filtro -->
+          <div class="grafico-wrapper">
+            <h2>Faturamento Mensal</h2>
+            <label for="filtro-mes">Selecione o mês:</label>
+            <input type="month" id="filtro-mes" />
+            <canvas id="grafico-faturamento-mensal" height="100"></canvas>
+          </div>
+        </div>
+
+        <!-- Top serviços -->
+        <section>
+          <h2>Top 3 Serviços Mais Agendados</h2>
+          <div id="top-servicos"></div>
+        </section>
+
+        <!-- Ranking de serviços -->
+        <section>
+          <h2>Ranking de Serviços</h2>
+          <ul id="ranking-servicos"></ul>
+        </section>
+      </main>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Para gráficos -->
-    <script src="script.js"></script> <!-- Vamos criar o JS -->
-</body>
+    <div id="loading" style="display: none">Carregando dados...</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
+  </body>
 </html>
