@@ -1,7 +1,7 @@
 package com.AgendaServico.demo.controller;
 
 
-import com.AgendaServico.demo.Infra.security.TokenService;
+import com.AgendaServico.demo.Service.TokenService;
 import com.AgendaServico.demo.Repository.UserRepository;
 import com.AgendaServico.demo.User.AuthenticationDTO;
 import com.AgendaServico.demo.User.LoginResponseDTO;

@@ -1,7 +1,7 @@
 CREATE TABLE cliente (
     id_cliente INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
-    telefone VARCHAR(14) NOT NULL
+    telefone VARCHAR(14) NOT NULL UNIQUE
 );
 
 CREATE TABLE servico (
@@ -13,10 +13,10 @@ CREATE TABLE servico (
 CREATE TABLE barbeiro (
     id_barbeiro INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
-    telefone VARCHAR(14) UNIQUE NOT NULL,
-    email VARCHAR(100) UNIQUE NOT NULL,
+    telefone VARCHAR(14) NOT NULL UNIQUE,
+    email VARCHAR(100) NOT NULL UNIQUE,
     data_contratacao DATE NOT NULL,
-    inicioExpediente TIME NOT NULL DEFAULT '8:00',
+    inicioExpediente TIME NOT NULL DEFAULT '08:00',
     fimExpediente TIME NOT NULL DEFAULT '20:00',
     ativo BOOLEAN NOT NULL,
     comissao DECIMAL(5,2)
@@ -27,9 +27,16 @@ CREATE TABLE agendamento (
     id_cliente INT,
     id_servico INT,
     id_barbeiro INT,
-    data_hora DATETIME,
+    data_hora TIMESTAMP,
     stats BOOLEAN,
     FOREIGN KEY (id_cliente) REFERENCES cliente(id_cliente),
     FOREIGN KEY (id_barbeiro) REFERENCES barbeiro(id_barbeiro),
     FOREIGN KEY (id_servico) REFERENCES servico(id_servico)
+);
+
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    login varchar(20) NOT NULL,
+    password varchar(20) NOT NULL,
+    role varchar(10) NOT NULL
 );
