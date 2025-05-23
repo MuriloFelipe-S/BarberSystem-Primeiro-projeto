@@ -1,4 +1,5 @@
-// servico/script.js com correção definitiva de carregamento dinâmico e melhorias
+// servico/script.js com token JWT no header Authorization
+
 function inicializarServicoPage() {
   const modal = document.getElementById('modal');
   const abrirModal = document.getElementById('abrirModal');
@@ -51,11 +52,15 @@ function inicializarServicoPage() {
     const servico = { tipo, valor };
     const url = editandoId ? `http://localhost:8080/servico/${editandoId}` : 'http://localhost:8080/servico';
     const metodo = editandoId ? 'PUT' : 'POST';
+    const token = localStorage.getItem("token");
 
     try {
       const response = await fetch(url, {
         method: metodo,
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify(servico)
       });
 
@@ -70,9 +75,7 @@ function inicializarServicoPage() {
         modal.style.display = 'none';
         carregarServicos();
       } else {
-        // Caso o servidor retorne um erro, tenta extrair a mensagem de erro
         const errorData = await response.json();
-        // Exibe um erro apropriado
         Swal.fire("Erro!", errorData.message || "Erro desconhecido", "error");
       }
     } catch (error) {
@@ -85,25 +88,21 @@ function inicializarServicoPage() {
     }
   });
 
-  // Carregar serviços
   async function carregarServicos() {
     try {
-      const resposta = await fetch('http://localhost:8080/servico');
+      const token = localStorage.getItem("token");
 
-      // Verifica se a resposta é válida
+      const resposta = await fetch('http://localhost:8080/servico', {
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      });
+
       if (!resposta.ok) {
         throw new Error(`Erro na requisição: ${resposta.status} - ${resposta.statusText}`);
       }
 
-      const textoResposta = await resposta.text(); // Obtém a resposta como texto
-      let servicos;
-
-      try {
-        servicos = JSON.parse(textoResposta); // Tenta converter para JSON
-      } catch (jsonError) {
-        console.error('Erro ao converter resposta para JSON:', textoResposta);
-        throw new Error('A resposta do servidor não é um JSON válido.');
-      }
+      const servicos = await resposta.json();
 
       const lista = document.getElementById('lista-servicos');
       lista.innerHTML = '';
@@ -112,16 +111,16 @@ function inicializarServicoPage() {
         const li = document.createElement('li');
 
         li.innerHTML = `
-        <div class="info">
-          <div class="icon">💈</div>
-          <h3>${s.tipo}</h3>
-          <p class="valor">R$ ${s.valor.toFixed(2).replace('.', ',')}</p>
-        </div>
-        <div class="botoes">
-          <button class="editar" onclick="editarServico(${s.idServico}, '${s.tipo}', ${s.valor})">✎</button>
-          <button class="excluir" onclick="deletarServico(${s.idServico})">✕</button>
-        </div>
-      `;
+          <div class="info">
+            <div class="icon">💈</div>
+            <h3>${escapeHTML(s.tipo)}</h3>
+            <p class="valor">R$ ${s.valor.toFixed(2).replace('.', ',')}</p>
+          </div>
+          <div class="botoes">
+            <button class="editar" onclick="editarServico(${s.idServico}, '${escapeHTML(s.tipo)}', ${s.valor})">✎</button>
+            <button class="excluir" onclick="deletarServico(${s.idServico})">✕</button>
+          </div>
+        `;
 
         lista.appendChild(li);
       });
@@ -148,9 +147,14 @@ function inicializarServicoPage() {
       cancelButtonText: 'Cancelar'
     }).then(async (result) => {
       if (result.isConfirmed) {
+        const token = localStorage.getItem("token");
+
         try {
           const response = await fetch(`http://localhost:8080/servico/${id}`, {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
           });
 
           if (response.ok) {
@@ -175,12 +179,12 @@ function inicializarServicoPage() {
     modal.style.display = 'flex';
   }
 
-  // Expõe funções que são chamadas via onclick
+  // Expor funções para chamadas globais do onclick
   window.editarServico = editarServico;
   window.deletarServico = deletarServico;
 
   carregarServicos();
 }
 
-// ⚠️ Chamada imediata após o script ser injetado dinamicamente no SPA
+// Inicializa a página de serviços
 inicializarServicoPage();
