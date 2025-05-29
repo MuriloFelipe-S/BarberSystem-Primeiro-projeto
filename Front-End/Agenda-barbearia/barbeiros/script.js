@@ -8,7 +8,14 @@ function inicializarBarbeirosPage() {
   const lista = document.getElementById("lista-barbeiros");
   let editandoId = null;
 
-  // Abrir o modal para criar um novo barbeiro
+  // 🔐 Verificação de token
+  const token = localStorage.getItem("token");
+  if (!token) {
+    window.location.href = "/login.html";
+    return;
+  }
+
+  // Abrir modal
   abrirModal.onclick = () => {
     form.reset();
     editandoId = null;
@@ -17,13 +24,13 @@ function inicializarBarbeirosPage() {
     modal.style.display = "flex";
   };
 
-  // Fechar o modal
+  // Fechar modal
   fecharModal.onclick = () => (modal.style.display = "none");
   window.onclick = (e) => {
     if (e.target === modal) modal.style.display = "none";
   };
 
-  // Submeter o formulário para criar ou editar o barbeiro
+  // Submeter formulário
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
 
@@ -38,7 +45,6 @@ function inicializarBarbeirosPage() {
       fimExpediente: document.getElementById("expedienteFim").value,
     };
 
-    // Verificar se todos os campos obrigatórios estão preenchidos
     if (
       Object.values(barbeiro).some(
         (v) => v === "" || v === null || (typeof v === "number" && isNaN(v))
@@ -61,29 +67,28 @@ function inicializarBarbeirosPage() {
     try {
       const response = await fetch(url, {
         method: metodo,
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify(barbeiro),
       });
 
-      // Verificar se a resposta foi bem-sucedida
       if (response.ok) {
         Swal.fire({
           icon: "success",
           title: "Sucesso!",
-          text: `Barbeiro ${editandoId ? "atualizado" : "cadastrado"
-            } com sucesso.`,
+          text: `Barbeiro ${editandoId ? "atualizado" : "cadastrado"} com sucesso.`,
           confirmButtonColor: "#007bff",
         });
         form.reset();
         modal.style.display = "none";
         carregarBarbeiros();
       } else {
-        // Caso o servidor retorne um erro
-        const errorData = await response.json(); // Supondo que o servidor retorna um JSON
-        throw new Error(errorData.message || 'Erro desconhecido');
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Erro desconhecido");
       }
     } catch (error) {
-      // Exibir o erro retornado pelo servidor
       Swal.fire({
         icon: "error",
         title: "Erro",
@@ -93,11 +98,13 @@ function inicializarBarbeirosPage() {
     }
   });
 
-
-  // Função para carregar a lista de barbeiros
   async function carregarBarbeiros() {
     try {
-      const resposta = await fetch("http://localhost:8080/barbeiro");
+      const resposta = await fetch("http://localhost:8080/barbeiro", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       const barbeiros = await resposta.json();
       lista.innerHTML = "";
       barbeiros.forEach(criarElementoBarbeiro);
@@ -111,7 +118,6 @@ function inicializarBarbeirosPage() {
     }
   }
 
-  // Função para criar o elemento de barbeiro na lista
   function criarElementoBarbeiro(b) {
     const li = document.createElement("li");
     li.innerHTML = `
@@ -132,7 +138,6 @@ function inicializarBarbeirosPage() {
     lista.appendChild(li);
   }
 
-  // Função para deletar o barbeiro
   async function deletarBarbeiro(id) {
     const confirmacao = await Swal.fire({
       title: "Tem certeza?",
@@ -147,31 +152,26 @@ function inicializarBarbeirosPage() {
 
     if (confirmacao.isConfirmed) {
       try {
-        // Envia a requisição DELETE para excluir o barbeiro
         const response = await fetch(`http://localhost:8080/barbeiro/${id}`, {
           method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         });
 
-        // Verifica se a resposta é OK (status 200-299)
         if (response.ok) {
-          // Se a exclusão for bem-sucedida
           Swal.fire("Excluído!", "Barbeiro excluído com sucesso.", "success");
-          carregarBarbeiros(); // Recarrega a lista de barbeiros
+          carregarBarbeiros();
         } else {
-          // Caso o servidor retorne um erro, tenta extrair a mensagem de erro
           const errorData = await response.json();
-          // Exibe um erro apropriado
           Swal.fire("Erro!", errorData.message || "Erro desconhecido", "error");
         }
       } catch (error) {
-        // Caso haja problemas de comunicação com o servidor
         Swal.fire("Erro!", "Erro ao se comunicar com o servidor.", "error");
       }
     }
   }
 
-
-  // Função para editar o barbeiro
   function editarBarbeiro(
     id,
     nome,

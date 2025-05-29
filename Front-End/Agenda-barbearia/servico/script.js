@@ -1,4 +1,28 @@
-// servico/script.js com token JWT no header Authorization
+async function authFetch(url, options = {}) {
+  const token = localStorage.getItem("token");
+
+  if (!options.headers) {
+    options.headers = {};
+  }
+
+  options.headers["Authorization"] = `Bearer ${token}`;
+
+  try {
+    const response = await fetch(url, options);
+    if (!response.ok) {
+      throw response;
+    }
+    return response;
+  } catch (err) {
+    if (err instanceof Response) {
+      const mensagem = await getApiErrorMessage(err);
+      throw new Error(mensagem);
+    } else {
+      throw new Error("Erro de conexão com o servidor.");
+    }
+  }
+}
+
 
 function inicializarServicoPage() {
   const modal = document.getElementById('modal');
@@ -32,77 +56,83 @@ function inicializarServicoPage() {
     if (e.target == modal) modal.style.display = 'none';
   };
 
-  form.addEventListener('submit', async function (event) {
-    event.preventDefault();
+form.addEventListener('submit', async function (event) {
+  event.preventDefault();
 
-    const tipo = document.getElementById('tipo').value.trim();
-    const valorStr = document.getElementById('valor').value;
-    const valor = parseFloat(valorStr);
+  const tipo = document.getElementById('tipo').value.trim();
+  const valorStr = document.getElementById('valor').value;
+  const valor = parseFloat(valorStr);
 
-    if (tipo === '' || valorStr === '' || isNaN(valor) || valor < 0) {
+  if (tipo === '' || valorStr === '' || isNaN(valor) || valor < 0) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Campos inválidos',
+      text: 'Preencha os dados corretamente antes de continuar.',
+      confirmButtonColor: '#ffc107'
+    });
+    return;
+  }
+
+  const servico = { tipo, valor };
+  const url = editandoId
+    ? `http://localhost:8080/servico/${editandoId}`
+    : 'http://localhost:8080/servico';
+  const metodo = editandoId ? 'PUT' : 'POST';
+
+  try {
+    const response = await authFetch(url, {
+      method: metodo,
+      headers: {
+        'Content-Type': 'application/json'
+        // Authorization já é adicionado automaticamente dentro do authFetch
+      },
+      body: JSON.stringify(servico)
+    });
+
+    if (response.ok) {
       Swal.fire({
-        icon: 'warning',
-        title: 'Campos inválidos',
-        text: 'Preencha os dados corretamente antes de continuar.',
-        confirmButtonColor: '#ffc107'
+        icon: 'success',
+        title: 'Sucesso!',
+        text: `Serviço ${editandoId ? 'atualizado' : 'cadastrado'} com sucesso.`,
+        confirmButtonColor: '#007bff'
       });
-      return;
+      form.reset();
+      modal.style.display = 'none';
+      carregarServicos();
+    } else {
+      const errorData = await response.json();
+      Swal.fire("Erro!", errorData.message || "Erro desconhecido", "error");
     }
+  } catch (error) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Erro',
+      text: 'Erro na comunicação com o servidor.',
+      confirmButtonColor: '#dc3545'
+    });
+  }
+});
 
-    const servico = { tipo, valor };
-    const url = editandoId ? `http://localhost:8080/servico/${editandoId}` : 'http://localhost:8080/servico';
-    const metodo = editandoId ? 'PUT' : 'POST';
-    const token = localStorage.getItem("token");
 
-    try {
-      const response = await fetch(url, {
-        method: metodo,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(servico)
-      });
-
-      if (response.ok) {
-        Swal.fire({
-          icon: 'success',
-          title: 'Sucesso!',
-          text: `Serviço ${editandoId ? 'atualizado' : 'cadastrado'} com sucesso.`,
-          confirmButtonColor: '#007bff'
-        });
-        form.reset();
-        modal.style.display = 'none';
-        carregarServicos();
-      } else {
-        const errorData = await response.json();
-        Swal.fire("Erro!", errorData.message || "Erro desconhecido", "error");
-      }
-    } catch (error) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Erro',
-        text: 'Erro na comunicação com o servidor.',
-        confirmButtonColor: '#dc3545'
-      });
-    }
-  });
-
+  // Carregar serviços
   async function carregarServicos() {
     try {
-      const token = localStorage.getItem("token");
+      const resposta = await authFetch('http://localhost:8080/servico');
 
-      const resposta = await fetch('http://localhost:8080/servico', {
-        headers: {
-          "Authorization": `Bearer ${token}`
-        }
-      });
-
+      // Verifica se a resposta é válida
       if (!resposta.ok) {
         throw new Error(`Erro na requisição: ${resposta.status} - ${resposta.statusText}`);
       }
 
-      const servicos = await resposta.json();
+      const textoResposta = await resposta.text(); // Obtém a resposta como texto
+      let servicos;
+
+      try {
+        servicos = JSON.parse(textoResposta); // Tenta converter para JSON
+      } catch (jsonError) {
+        console.error('Erro ao converter resposta para JSON:', textoResposta);
+        throw new Error('A resposta do servidor não é um JSON válido.');
+      }
 
       const lista = document.getElementById('lista-servicos');
       lista.innerHTML = '';
@@ -111,16 +141,16 @@ function inicializarServicoPage() {
         const li = document.createElement('li');
 
         li.innerHTML = `
-          <div class="info">
-            <div class="icon">💈</div>
-            <h3>${escapeHTML(s.tipo)}</h3>
-            <p class="valor">R$ ${s.valor.toFixed(2).replace('.', ',')}</p>
-          </div>
-          <div class="botoes">
-            <button class="editar" onclick="editarServico(${s.idServico}, '${escapeHTML(s.tipo)}', ${s.valor})">✎</button>
-            <button class="excluir" onclick="deletarServico(${s.idServico})">✕</button>
-          </div>
-        `;
+        <div class="info">
+          <div class="icon">💈</div>
+          <h3>${s.tipo}</h3>
+          <p class="valor">R$ ${s.valor.toFixed(2).replace('.', ',')}</p>
+        </div>
+        <div class="botoes">
+          <button class="editar" onclick="editarServico(${s.idServico}, '${s.tipo}', ${s.valor})">✎</button>
+          <button class="excluir" onclick="deletarServico(${s.idServico})">✕</button>
+        </div>
+      `;
 
         lista.appendChild(li);
       });
@@ -147,21 +177,16 @@ function inicializarServicoPage() {
       cancelButtonText: 'Cancelar'
     }).then(async (result) => {
       if (result.isConfirmed) {
-        const token = localStorage.getItem("token");
-
         try {
-          const response = await fetch(`http://localhost:8080/servico/${id}`, {
-            method: 'DELETE',
-            headers: {
-              'Authorization': `Bearer ${token}`
-            }
+          const response = await authFetch(`http://localhost:8080/servico/${id}`, {
+            method: 'DELETE'
           });
 
           if (response.ok) {
             Swal.fire('Excluído!', 'Serviço excluído com sucesso.', 'success');
             carregarServicos();
           } else {
-            throw new Error();
+            throw new Error(`Erro ao deletar o serviço com ID ${id}`);
           }
         } catch (error) {
           Swal.fire('Erro!', 'Erro ao se comunicar com o servidor.', 'error');
@@ -179,12 +204,12 @@ function inicializarServicoPage() {
     modal.style.display = 'flex';
   }
 
-  // Expor funções para chamadas globais do onclick
+  // Expõe funções que são chamadas via onclick
   window.editarServico = editarServico;
   window.deletarServico = deletarServico;
 
   carregarServicos();
 }
 
-// Inicializa a página de serviços
+// ⚠️ Chamada imediata após o script ser injetado dinamicamente no SPA
 inicializarServicoPage();

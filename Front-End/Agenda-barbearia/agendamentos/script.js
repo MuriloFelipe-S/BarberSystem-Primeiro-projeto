@@ -2,6 +2,31 @@ if (typeof API_BASE_URL === "undefined") {
   API_BASE_URL = "http://localhost:8080";
 }
 
+async function authFetch(url, options = {}) {
+  const token = localStorage.getItem("token");
+
+  if (!options.headers) {
+    options.headers = {};
+  }
+
+  options.headers["Authorization"] = `Bearer ${token}`;
+
+  try {
+    const response = await fetch(url, options);
+    if (!response.ok) {
+      throw response;
+    }
+    return response;
+  } catch (err) {
+    if (err instanceof Response) {
+      const mensagem = await getApiErrorMessage(err);
+      throw new Error(mensagem);
+    } else {
+      throw new Error("Erro de conexão com o servidor.");
+    }
+  }
+}
+
 async function getApiErrorMessage(response) {
   let errorMsg = "Erro ao se comunicar com o servidor.";
   try {
@@ -78,76 +103,74 @@ async function inicializarAgendamentosPage() {
     if (e.target == modal) modal.style.display = "none";
   };
 
-  form.addEventListener("submit", async function (event) {
-    event.preventDefault();
+form.addEventListener("submit", async function (event) {
+  event.preventDefault();
 
-    const cliente = document.getElementById("cliente").value;
-    const barbeiro = document.getElementById("barbeiro").value;
-    const servicosSelecionados = document.querySelectorAll(".servico-item.selecionado");
-    const dataHora = document.getElementById("dataHora").value;
-    const status = document.getElementById("status").value;
+  const cliente = document.getElementById("cliente").value;
+  const barbeiro = document.getElementById("barbeiro").value;
+  const servicosSelecionados = document.querySelectorAll(".servico-item.selecionado");
+  const dataHora = document.getElementById("dataHora").value;
+  const status = document.getElementById("status").value;
 
-    if (!cliente || !barbeiro || servicosSelecionados.length === 0 || !dataHora || status === "") {
+  if (!cliente || !barbeiro || servicosSelecionados.length === 0 || !dataHora || status === "") {
+    Swal.fire({
+      icon: "warning",
+      title: "Campos obrigatórios",
+      text: "Preencha todos os campos corretamente.",
+      confirmButtonColor: "#ffc107",
+    });
+    return;
+  }
+
+  const servicos = Array.from(servicosSelecionados).map((div) => ({
+    idServico: div.dataset.id,
+  }));
+
+  const agendamento = {
+    cliente: { idCliente: cliente },
+    barbeiro: { idBarbeiro: barbeiro },
+    servicos,
+    dataHora: dataHora + ":00",
+    stats: status === "true",
+  };
+
+  const url = editandoId ? `${API_BASE_URL}/agenda/${editandoId}` : `${API_BASE_URL}/agenda`;
+  const metodo = editandoId ? "PUT" : "POST";
+
+  try {
+    const response = await authFetch(url, {
+      method: metodo,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(agendamento),
+    });
+
+    if (response.ok) {
       Swal.fire({
-        icon: "warning",
-        title: "Campos obrigatórios",
-        text: "Preencha todos os campos corretamente.",
-        confirmButtonColor: "#ffc107",
+        icon: "success",
+        title: "Sucesso!",
+        text: `Agendamento ${editandoId ? "atualizado" : "cadastrado"} com sucesso.`,
+        confirmButtonColor: "#007bff",
       });
-      return;
+      form.reset();
+      modal.style.display = "none";
+      await carregarAgendamentos();
+    } else {
+      await handleApiError(response);
     }
+  } catch (error) {
+    Swal.fire({
+      icon: "error",
+      title: "Erro",
+      text: error.message,
+      confirmButtonColor: "#dc3545",
+    });
+  }
+});
 
-    const servicos = Array.from(servicosSelecionados).map((div) => ({
-      idServico: div.dataset.id,
-    }));
-
-    const agendamento = {
-      cliente: { idCliente: cliente },
-      barbeiro: { idBarbeiro: barbeiro },
-      servicos,
-      dataHora: dataHora + ":00",
-      stats: status === "true",
-    };
-
-    const url = editandoId ? `${API_BASE_URL}/agenda/${editandoId}` : `${API_BASE_URL}/agenda`;
-    const metodo = editandoId ? "PUT" : "POST";
-
-    try {
-      const response = await fetch(url, {
-        method: metodo,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(agendamento),
-      });
-
-      if (response.ok) {
-        Swal.fire({
-          icon: "success",
-          title: "Sucesso!",
-          text: `Agendamento ${editandoId ? "atualizado" : "cadastrado"} com sucesso.`,
-          confirmButtonColor: "#007bff",
-        });
-        form.reset();
-        modal.style.display = "none";
-        await carregarAgendamentos();
-      } else {
-        // Caso o servidor retorne um erro, tenta extrair a mensagem de erro
-        const errorData = await response.json();
-        // Exibe um erro apropriado
-        Swal.fire("Erro!", errorData.message || "Erro desconhecido", "error");
-      }
-    } catch (error) {
-      Swal.fire({
-        icon: "error",
-        title: "Erro",
-        text: error.message,
-        confirmButtonColor: "#dc3545",
-      });
-    }
-  });
 
   async function carregarAgendamentos() {
     try {
-      const resposta = await fetch(`${API_BASE_URL}/agenda`);
+      const resposta = await authFetch(`${API_BASE_URL}/agenda`);
       const agendamentos = await resposta.json();
       const lista = document.getElementById("lista-agendamentos");
       lista.innerHTML = "";
@@ -189,9 +212,9 @@ async function inicializarAgendamentosPage() {
   async function carregarSelects() {
     try {
       const [clientesRes, barbeirosRes, servicosRes] = await Promise.all([
-        fetch(`${API_BASE_URL}/cliente`),
-        fetch(`${API_BASE_URL}/barbeiro`),
-        fetch(`${API_BASE_URL}/servico`),
+        authFetch(`${API_BASE_URL}/cliente`),
+        authFetch(`${API_BASE_URL}/barbeiro`),
+        authFetch(`${API_BASE_URL}/servico`),
       ]);
 
       if (!clientesRes.ok)
@@ -275,7 +298,7 @@ async function inicializarAgendamentosPage() {
 
     if (confirmacao.isConfirmed) {
       try {
-        const response = await fetch(`${API_BASE_URL}/agenda/${id}`, {
+        const response = await authFetch(`${API_BASE_URL}/agenda/${id}`, {
           method: "DELETE",
         });
         if (response.ok) {

@@ -1,25 +1,109 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Login</title>
-</head>
-<body>
-<div class="auth-container">
-    <h2>Login</h2>
-    <form id="LoginForm">
-      <input type="text" id="login" placeholder="Login" required>
-      <input type="password" id="password" placeholder="password" required />
-      <button type="submit">Entrar</button>
-    </form>
-    <div class="auth-footer">
-      <p>Não tem conta? <a href="register.html">Registrar</a></p>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.8.2/css/all.css"
+      integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay"
+      crossorigin="anonymous"
+    />
+  </head>
+<body class="sign-up-js">
+  <div class="container">
+    <!-- Formulário de Registro -->
+    <div class="content first-content">
+      <div class="first-column">
+        <h2 class="title title-primary">Bem-vindo de volta!</h2>
+        <p class="description description-primary">Para se manter conectado</p>
+        <p class="description description-primary">
+          faça login com suas informações pessoais
+        </p>
+        <button id="signin" class="btn btn-primary">Entrar</button>
+      </div>
+      <div class="second-column">
+        <h2 class="title title-second">Criar Conta</h2>
+        <form class="form" id="registerForm">
+          <label class="label-input" for="register-login">
+            <i class="far fa-user icon-modify"></i>
+            <input
+              type="text"
+              id="register-login"
+              name="login"
+              placeholder="Login"
+              required
+              aria-label="Login"
+            />
+          </label>
+
+          <label class="label-input" for="register-password">
+            <i class="fas fa-lock icon-modify"></i>
+            <input
+              type="password"
+              id="register-password"
+              name="password"
+              placeholder="Senha"
+              required
+              aria-label="Senha"
+            />
+          </label>
+
+          <label for="role" class="USER">Tipo de Usuário</label>
+          <select id="role" name="role" required aria-label="Tipo de Usuário">
+            <option value="USER">Usuário Comum</option>
+            <option value="ADMIN">Administrador</option>
+          </select>
+
+          <button class="btn btn-second" type="submit">Registrar</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Formulário de Login -->
+    <div class="content second-content">
+      <div class="first-column">
+        <h2 class="title title-primary">Olá, amigo!</h2>
+        <p class="description description-primary">
+          Entre com seus dados pessoais
+        </p>
+        <p class="description description-primary">
+          e comece sua jornada com a gente
+        </p>
+        <button id="signup" class="btn btn-primary">Registrar</button>
+      </div>
+      <div class="second-column">
+        <h2 class="title title-second">Entrar no sistema</h2>
+        <form class="form" id="loginForm">
+          <label class="label-input">
+            <i class="far fa-envelope icon-modify"></i>
+            <input
+              type="text"
+              id="login-login"
+              name="login"
+              placeholder="Login"
+              required
+            />
+          </label>
+          <label class="label-input">
+            <i class="fas fa-lock icon-modify"></i>
+            <input
+              type="password"
+              id="login-password"
+              name="password"
+              placeholder="Senha"
+              required
+            />
+          </label>
+          <button class="btn btn-second" type="submit">Entrar</button>
+        </form>
+      </div>
     </div>
   </div>
-
-
-    <script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
+
 </html>

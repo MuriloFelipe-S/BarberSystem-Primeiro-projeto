@@ -1,4 +1,31 @@
-// clientes/script.js
+async function authFetch(url, options = {}) {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    throw new Error("Usuário não autenticado. Token ausente.");
+  }
+
+  if (!options.headers) {
+    options.headers = {};
+  }
+
+  options.headers["Authorization"] = `Bearer ${token}`;
+
+  try {
+    const response = await fetch(url, options);
+    if (!response.ok) {
+      throw response;
+    }
+    return response;
+  } catch (err) {
+    if (err instanceof Response) {
+      const mensagem = await getApiErrorMessage(err);
+      throw new Error(mensagem);
+    } else {
+      throw new Error("Erro de conexão com o servidor.");
+    }
+  }
+}
+
 function inicializarClientesPage() {
   const modal = document.getElementById('modal');
   const abrirModal = document.getElementById('abrirModal');
@@ -21,7 +48,7 @@ function inicializarClientesPage() {
   };
 
   window.onclick = e => {
-    if (e.target == modal) modal.style.display = 'none';
+    if (e.target === modal) modal.style.display = 'none';
   };
 
   form.addEventListener('submit', async function (event) {
@@ -30,7 +57,7 @@ function inicializarClientesPage() {
     const nome = document.getElementById('nome').value.trim();
     const telefone = document.getElementById('telefone').value.trim();
 
-    if (nome === '' || telefone === '') {
+    if (!nome || !telefone) {
       Swal.fire({
         icon: 'warning',
         title: 'Campos obrigatórios',
@@ -45,33 +72,26 @@ function inicializarClientesPage() {
     const metodo = editandoId ? 'PUT' : 'POST';
 
     try {
-      const response = await fetch(url, {
+      const response = await authFetch(url, {
         method: metodo,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(cliente)
       });
 
-      if (response.ok) {
-        Swal.fire({
-          icon: 'success',
-          title: 'Sucesso!',
-          text: `Cliente ${editandoId ? 'atualizado' : 'cadastrado'} com sucesso.`,
-          confirmButtonColor: '#007bff'
-        });
-        form.reset();
-        modal.style.display = 'none';
-        carregarClientes();
-      } else {
-        // Caso o servidor retorne um erro, tenta extrair a mensagem de erro
-        const errorData = await response.json();
-        // Exibe um erro apropriado
-        Swal.fire("Erro!", errorData.message || "Erro desconhecido", "error");
-      }
+      Swal.fire({
+        icon: 'success',
+        title: 'Sucesso!',
+        text: `Cliente ${editandoId ? 'atualizado' : 'cadastrado'} com sucesso.`,
+        confirmButtonColor: '#007bff'
+      });
+      form.reset();
+      modal.style.display = 'none';
+      carregarClientes();
     } catch (error) {
       Swal.fire({
         icon: 'error',
         title: 'Erro',
-        text: 'Erro na comunicação com o servidor.',
+        text: error.message || 'Erro na comunicação com o servidor.',
         confirmButtonColor: '#dc3545'
       });
     }
@@ -79,23 +99,51 @@ function inicializarClientesPage() {
 
   async function carregarClientes() {
     try {
-      const resposta = await fetch('http://localhost:8080/cliente');
-      const clientes = await resposta.json();
+      const response = await authFetch("http://localhost:8080/cliente");
+      const clientes = await response.json();
       const lista = document.getElementById('lista-clientes');
-      lista.innerHTML = '';
+      lista.textContent = ''; // Limpa de forma segura
 
       clientes.forEach(c => {
         const li = document.createElement('li');
-        li.innerHTML = `
-            <div class="info">
-              <strong>Nome:</strong> <span>${c.nome}</span>
-              <strong>Telefone:</strong> <span>${c.telefone}</span>
-            </div>
-            <div class="botoes">
-              <button class="editar" onclick="editarCliente(${c.idCliente}, '${c.nome}', '${c.telefone}')">✎</button>
-              <button class="excluir" onclick="deletarCliente(${c.idCliente})">✕</button>
-            </div>
-          `;
+
+        const divInfo = document.createElement('div');
+        divInfo.className = 'info';
+
+        const strongNome = document.createElement('strong');
+        strongNome.textContent = 'Nome: ';
+        const spanNome = document.createElement('span');
+        spanNome.textContent = c.nome;
+
+        const strongTelefone = document.createElement('strong');
+        strongTelefone.textContent = ' Telefone: ';
+        const spanTelefone = document.createElement('span');
+        spanTelefone.textContent = c.telefone;
+
+        divInfo.appendChild(strongNome);
+        divInfo.appendChild(spanNome);
+        divInfo.appendChild(strongTelefone);
+        divInfo.appendChild(spanTelefone);
+
+        const divBotoes = document.createElement('div');
+        divBotoes.className = 'botoes';
+
+        const btnEditar = document.createElement('button');
+        btnEditar.className = 'editar';
+        btnEditar.textContent = '✎';
+        btnEditar.addEventListener('click', () => editarCliente(c.idCliente, c.nome, c.telefone));
+
+        const btnExcluir = document.createElement('button');
+        btnExcluir.className = 'excluir';
+        btnExcluir.textContent = '✕';
+        btnExcluir.addEventListener('click', () => deletarCliente(c.idCliente));
+
+        divBotoes.appendChild(btnEditar);
+        divBotoes.appendChild(btnExcluir);
+
+        li.appendChild(divInfo);
+        li.appendChild(divBotoes);
+
         lista.appendChild(li);
       });
     } catch (error) {
@@ -116,18 +164,18 @@ function inicializarClientesPage() {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const response = await fetch(`http://localhost:8080/cliente/${id}`, {
-            method: 'DELETE'
+          const response = await authFetch(`http://localhost:8080/cliente/${id}`, {
+            method: "DELETE",
           });
 
           if (response.ok) {
-            Swal.fire('Excluído!', 'Cliente excluído com sucesso.', 'success');
+            Swal.fire("Excluído!", "Cliente excluído com sucesso.", "success");
             carregarClientes();
           } else {
-            throw new Error();
+            throw new Error("Erro ao excluir cliente.");
           }
         } catch (error) {
-          Swal.fire('Erro!', 'Erro ao se comunicar com o servidor.', 'error');
+          Swal.fire("Erro!", error.message || "Erro ao se comunicar com o servidor.", "error");
         }
       }
     });
