@@ -36,7 +36,8 @@ CREATE TABLE agendamento (
 
 CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    login varchar(20) NOT NULL,
-    password varchar(20) NOT NULL,
+    name varchar(15) NOT NULL,
+    login varchar(10) NOT NULL,
+    password varchar(15) NOT NULL,
     role varchar(10) NOT NULL
 );

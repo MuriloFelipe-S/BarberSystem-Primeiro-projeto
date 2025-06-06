@@ -32,13 +32,23 @@ function atualizarUserRoleNoMenu() {
     const payload = JSON.parse(payloadJson);
 
     const role = payload.role || "USER";
+    const name = payload.name || "Usuário";
 
     const userInfos = document.getElementById("user_infos");
     if (userInfos) {
       userInfos.innerHTML = `
+        <span class="item-description">${name}</span>
         <span class="item-description">${role.toUpperCase()}</span>
       `;
     }
+
+    if (role !== "ADMIN") {
+      const dashboardMenuItem = document.querySelector('a[data-page="dashboard"]');
+      if (dashboardMenuItem) {
+        dashboardMenuItem.parentElement.remove();
+      }
+    }
+
   } catch (error) {
     console.error("Erro ao decodificar token JWT:", error);
   }

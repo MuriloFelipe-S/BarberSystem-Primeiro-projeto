@@ -8,11 +8,11 @@
 ========================== */
 :root {
   --cor-primaria: #007bff;
-  --cor-secundaria: #e3e9f7;
+  --cor-secundaria: #ffffff;
   --cor-sucesso: #28a745;
   --cor-erro: #dc3545;
   --cor-aviso: #ffc107;
-  --texto-secundario: #6b6b6b;
+  --texto-secundario: #ffffff;
 }
 
 /* ==========================
@@ -53,7 +53,7 @@ main {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  background-color: #ffffff;
+  background-color: #292727;
   height: 100vh;
   border-radius: 0px 18px 18px 0px;
   transition: all 0.5s;
@@ -109,7 +109,7 @@ main {
 
 .side-item:hover:not(.active),
 #logout_btn:hover {
-  background-color: var(--cor-secundaria);
+  background-color: #474444;
 }
 
 .side-item.active {
@@ -136,10 +136,18 @@ main {
   height: 20px;
 }
 
+.side-item i {
+  color: #ffffff;
+}
+
 /* Logout */
 #logout {
   border-top: 1px solid var(--cor-secundaria);
   padding: 12px;
+}
+
+#logout i{
+color: #ffffff;
 }
 
 #logout_btn {
@@ -179,6 +187,7 @@ main {
 
 /* Descrição dos itens */
 .item-description {
+  color: #ffffff;
   width: 0px;
   overflow: hidden;
   white-space: nowrap;
@@ -220,7 +229,7 @@ main {
 }
 
 .lista-servicos li {
-  background-color: white;
+  background-color: rgba(255, 255, 228, 0.466);
   margin-bottom: 12px;
   padding: 15px 20px;
   border-radius: 6px;

@@ -26,12 +26,13 @@ public class TokenService {
                     .withIssuer("auth-api")
                     .withSubject(user.getLogin())
                     .withClaim("role", user.getRole().name())
+                    .withClaim("name", user.getName())
                     .withExpiresAt(genExpirationDate())
                     .sign(algorithm);
             return token;
         }catch (JWTCreationException exception){
 
-            throw new RuntimeException("Error while generation token", exception);
+            throw new RuntimeException("ERRO AO GERAR TOKEN", exception);
 
         }
     }

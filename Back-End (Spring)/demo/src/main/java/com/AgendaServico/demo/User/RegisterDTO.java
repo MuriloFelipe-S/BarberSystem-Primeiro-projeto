@@ -1,4 +1,4 @@
 package com.AgendaServico.demo.User;
 
-public record RegisterDTO(String login, String password, UserRole role) {
+public record RegisterDTO(String login, String name,String password, UserRole role) {
 }

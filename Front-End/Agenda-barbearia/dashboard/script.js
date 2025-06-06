@@ -1,8 +1,33 @@
+async function authFetch(url, options = {}) {
+  const token = localStorage.getItem("token");
+
+  if (!options.headers) {
+    options.headers = {};
+  }
+
+  options.headers["Authorization"] = `Bearer ${token}`;
+
+  try {
+    const response = await fetch(url, options);
+    if (!response.ok) {
+      throw response;
+    }
+    return response;
+  } catch (err) {
+    if (err instanceof Response) {
+      const mensagem = await getApiErrorMessage(err);
+      throw new Error(mensagem);
+    } else {
+      throw new Error("Erro de conexão com o servidor.");
+    }
+  }
+}
+
 // Função para buscar dados da API e atualizar as informações da dashboard
 async function fetchData() {
     try {
         // Faz a requisição para a API na URL especificada
-        const response = await fetch('http://localhost:8080/agenda');
+        const response = await authFetch('http://localhost:8080/agenda');
 
         // Verifica se a resposta foi OK (status HTTP 200-299)
         if (!response.ok) {
