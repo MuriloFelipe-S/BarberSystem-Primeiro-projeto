@@ -60,26 +60,25 @@ O sistema simula um ambiente real de gerenciamento para barbearias, integrando a
 
 ---
 
-## Estrutura do Projeto
-
+📦 BarberSystem
 ├── 📂 backend
-├── 📂 src
- ├── 📂 main
-  ├── 📂 java
-   └── ... (controllers, services, models, repositories)
-   └── 📂 resources
-   ├── application.properties
-   ├── application-dev.properties
-   ├── application-prod.properties
-   └── data.sql
-
+│   └── 📂 src
+│       └── 📂 main
+│           ├── 📂 java
+│           │   └── ... (controllers, services, models, repositories)
+│           └── 📂 resources
+│               ├── application.properties
+│               ├── application-dev.properties
+│               ├── application-prod.properties
+│               └── data.sql
+│
 ├── 📂 frontend
-├── 📂 cliente
-├── 📂 barbeiro
-├── 📂 servico
-├── 📂 agendamento
-├── 📂 dashboard
-└── 📂 home
+│   ├── 📂 cliente
+│   ├── 📂 barbeiro
+│   ├── 📂 servico
+│   ├── 📂 agendamento
+│   ├── 📂 dashboard
+│   └── 📂 home
 
 ---
 
