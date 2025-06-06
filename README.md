@@ -80,6 +80,7 @@ O sistema simula um ambiente real de gerenciamento para barbearias, integrando a
 │   ├── 📂 servico
 │   ├── 📂 agendamento
 │   ├── 📂 dashboard
+│   ├── 📂 login
 │   └── 📂 home
  ```
 ---
