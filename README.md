@@ -125,15 +125,15 @@ IDE’s e Tecnologias:
 
 4. Crie um banco de dados no MySQL com o nome agenda (O script SQL está disponível no arquivo data.sql, localizado dentro da pasta resources.)
 
-  Importante: Caso utilize o MySQL, altere o perfil ativo no arquivo application.properties.
-  Originalmente estará configurado assim: "spring.profiles.active=dev"
-  Altere para: "spring.profiles.active=prod"
+   Importante: Caso utilize o MySQL, altere o perfil ativo no arquivo application.properties.
+   Originalmente estará configurado assim: "spring.profiles.active=dev"
+   Altere para: "spring.profiles.active=prod"
 
-  Em seguida, no arquivo application-prod.properties (configurado para uso com MySQL), configure os dados de acesso ao banco:
+   Em seguida, no arquivo application-prod.properties (configurado para uso com MySQL), configure os dados de acesso ao banco:
 
-  "spring.datasource.url=jdbc:mysql://localhost:3306/agenda?useSSL=false&serverTimezone=UTC
-   spring.datasource.username=root
-   spring.datasource.password=suasenha"
+   "spring.datasource.url=jdbc:mysql://localhost:3306/agenda?useSSL=false&serverTimezone=UTC
+    spring.datasource.username=root
+    spring.datasource.password=suasenha"
 
 5. Execute o projeto pela classe DemoApplication.java.
     Obs: Certifique-se de que todas as dependências Maven foram baixadas corretamente.
