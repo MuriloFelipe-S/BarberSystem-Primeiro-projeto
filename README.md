@@ -60,6 +60,8 @@ O sistema simula um ambiente real de gerenciamento para barbearias, integrando a
 
 ---
 
+## 📁 Estrutura do Projeto
+
 📦 BarberSystem
 ├── 📂 backend
 │   └── 📂 src
