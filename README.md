@@ -1,64 +1,13 @@
-# BarberSystem – Sistema de Gestão Completa para Barbearias
+# Projeto simples de um sistema de gestão para barbearias 
 
-[![Status](https://img.shields.io/badge/status-finalizado-success)]()
+### Funcionalidades
+- API RESTful (GET, POST, PUT, DELETE)
+- Interface Web
 
-Sistema completo de gerenciamento para barbearias, desenvolvido com o objetivo de facilitar a administração de uma barbearia por meio de um sistema de fácil usabilidade.
+### Tecnologias e feramentas Utilizadas
 
----
-
-## Visão Geral
-
-Este projeto foi desenvolvido com o objetivo de aplicar na prática os conhecimentos teóricos adquiridos ao longo dos meus estudos, além de servir como base para aprofundar ainda 
-mais minhas habilidades em desenvolvimento full-stack com foco em Java, Spring Boot, bancos de dados relacionais e integração com front-end utilizando HTML, CSS e JavaScript puro.  
-O sistema simula um ambiente real de gerenciamento para barbearias, integrando autenticação, CRUDs completos e regras de negócio reais.
-
----
-
-## Funcionalidades
-
-### Clientes
-- Cadastro com nome e telefone (formato brasileiro com máscara)
-- Listagem de todos os clientes registrados
-- Exclusão com confirmação
-- Validação de entrada no front-end
-
-### Barbeiros
-- Cadastro de barbeiros com nome, telefone, e-mail e data de contratação
-- Expediente (horário de início e fim do atendimento)
-- Marcação de status ativo/inativo
-- Cálculo de comissões (50% do valor de cada serviço)
-- Listagem, exclusão e edição de registros
-
-### Serviços
-- Cadastro de serviços com descrição e valor
-- Listagem de serviços disponíveis
-- Exclusão de serviços
-
-### Agendamentos
-- Agendamento com seleção de cliente, barbeiro, serviço e data/hora
-- Visualização e controle de horários
-- Interface simplificada para edição ou exclusão de agendamentos
-
----
-
-## Tecnologias Utilizadas
-
-### Back-End
-- Java 17
-- Spring Boot
-- Spring Security
-- Spring Data JPA
-- API RESTful
-- MySQL
-- H2
-- Configuração de CORS
-
-### Front-End
-- HTML5
-- CSS3
-- JavaScript
-
----
+<img src="https://skillicons.dev/icons?i=java,spring,mysql"/>
+<img src="https://skillicons.dev/icons?i=html,css,js"/>
 
 ## 📁 Estrutura do Projeto
  ```
@@ -83,21 +32,19 @@ O sistema simula um ambiente real de gerenciamento para barbearias, integrando a
 │   ├── 📂 login
 │   └── 📂 home
  ```
----
+
 
 ## Aprendizados e Aplicações
 
 Durante o desenvolvimento deste projeto, aprofundei e melhorei meus conhecimentos em:
 
-- Criação e consumo de APIs REST com Spring Boot
+- Criação e consumo de APIs com Spring Boot
 - Integração entre front-end e back-end com JavaScript puro
 - Arquitetura MVC e organização em camadas
 - Manipulação de banco de dados com JPA, MySQL e H2
 - Implementação de autenticação com Spring Security e JWT
 - Validação de dados tanto no front-end quanto no back-end
-- Modularização do código e reutilização de componentes
 
----
 
 ## Como Executar o Projeto
 
@@ -149,7 +96,8 @@ IDE’s e Tecnologias:
 ### Contribuição
 Este projeto foi desenvolvido como um estudo individual, mas contribuições são sempre bem-vindas para melhorias ou sugestões de novas funcionalidades.
 
-## Contato
-[![LinkedIn](https://img.shields.io/badge/-LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/murilofelipe/)  
-[![GitHub](https://img.shields.io/badge/-GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/MuriloFelipe-S)  
-[![Gmail](https://img.shields.io/badge/-Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:felipemurilo6@gmail.com)
+## Social
+
+[![LINKEDIN](https://go-skill-icons.vercel.app/api/icons?i=linkedin)](https://www.linkedin.com/in/murilofelipe/)
+[![GMAIL](https://skillicons.dev/icons?i=gmail)](mailto:felipemurilo6@gmail.com)
+[![GitHub](https://skillicons.dev/icons?i=github)](https://github.com/MuriloFelipe-S)
